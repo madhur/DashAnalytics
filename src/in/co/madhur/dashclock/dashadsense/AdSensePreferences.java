@@ -1,7 +1,6 @@
 package in.co.madhur.dashclock.dashadsense;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import in.co.madhur.dashclock.AppPreferences;
 
 public class AdSensePreferences extends AppPreferences

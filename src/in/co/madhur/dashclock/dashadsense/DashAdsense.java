@@ -11,7 +11,7 @@ import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.APIResult;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import in.co.madhur.dashclock.Consts.API_STATUS;
-import in.co.madhur.dashclock.dashadsense.google.GenerateReport1;
+import in.co.madhur.dashclock.dashanalytics.AnalyticsAPIResult;
 
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -24,6 +24,8 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.adsense.AdSense;
 import com.google.api.services.adsense.AdSenseScopes;
+import com.google.api.services.adsense.model.AdsenseReportsGenerateResponse;
+import com.google.api.services.analytics.model.GaData;
 
 public class DashAdsense extends DashClockExtension
 {
@@ -31,7 +33,6 @@ public class DashAdsense extends DashClockExtension
 	String AccountId, metricKey, periodKey;
 	private GoogleAccountCredential credential;
 	private AdSense adsense_service;
-	// private static FileDataStoreFactory dataStoreFactory;
 	List<String> scopes = new ArrayList<String>();
 
 	@Override
@@ -44,7 +45,7 @@ public class DashAdsense extends DashClockExtension
 				|| credential.getSelectedAccountName() == null
 				|| !credential.getSelectedAccountName().equals(appPreferences.getUserName()))
 		{
-			Log.d(App.TAG, "Account changed, retrieving new cred object");
+			Log.d(App.TAG_ADSENSE, "Account changed, retrieving new cred object");
 
 			try
 			{
@@ -55,27 +56,28 @@ public class DashAdsense extends DashClockExtension
 			catch (Exception e)
 			{
 
-				Log.e(App.TAG, "Exception in onInitialize" + e.getMessage());
+				Log.e(App.TAG_ADSENSE, "Exception in onInitialize" + e.getMessage());
 			}
 		}
 
 		AccountId = appPreferences.getMetadata(Keys.ACCOUNT_ID);
+		periodKey = appPreferences.getMetadata(Keys.PERIOD_ID);
 
 		if (TextUtils.isEmpty(AccountId))
 		{
-			Log.d(App.TAG, "Account not configured yet");
+			Log.d(App.TAG_ADSENSE, "Account not configured yet");
 			return;
 		}
 
 		if (Connection.isConnected(this))
 		{
 			if (App.LOCAL_LOGV)
-				Log.v(App.TAG, "Firing update:" + String.valueOf(arg0));
+				Log.v(App.TAG_ADSENSE, "Firing update:" + String.valueOf(arg0));
 
-			 new APIResultTask().execute(AccountId);
+			 new APIResultTask().execute(AccountId, periodKey);
 		}
 		else
-			Log.d(App.TAG, "No network, postponing update");
+			Log.d(App.TAG_ADSENSE, "No network, postponing update");
 	}
 
 	@Override
@@ -83,7 +85,6 @@ public class DashAdsense extends DashClockExtension
 	{
 		super.onInitialize(isReconnect);
 		appPreferences=new AdSensePreferences(this);
-
 		scopes.add(AdSenseScopes.ADSENSE_READONLY);
 
 	}
@@ -91,10 +92,6 @@ public class DashAdsense extends DashClockExtension
 	private AdSense initializeAdsense(GoogleAccountCredential credential)
 			throws Exception
 	{
-		// Authorization.
-		// Credential credential = authorize();
-
-		// Set up AdSense Management API client.
 		AdSense adsense = new AdSense.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).setApplicationName(getString(R.string.app_name)).build();
 
 		return adsense;
@@ -106,18 +103,18 @@ public class DashAdsense extends DashClockExtension
 		@Override
 		protected APIResult doInBackground(String... params)
 		{
-			String result = null;
+			AdsenseReportsGenerateResponse result = null;
 			try
 			{
-				result = GenerateReport1.run(adsense_service, null);
+				result = GenerateReport.run(adsense_service, null);
 			}
 			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				Log.e(App.TAG, e.getMessage());
+				Log.e(App.TAG_ADSENSE, e.getMessage());
+				return new APIResult(e.getMessage());
 			}
 			
-			return new APIResult(API_STATUS.SUCCESS, result); 
+			return new AdSenseAPIResult(result); 
 			
 			
 		}
@@ -125,10 +122,34 @@ public class DashAdsense extends DashClockExtension
 		@Override
 		protected void onPostExecute(APIResult resultAPI)
 		{
+			StringBuilder sb=new StringBuilder();
 			// Do not do anything if there is a failure, could be network
 			// condition.
 			if (resultAPI.getStatus() == API_STATUS.FAILURE)
 				return;
+			
+			AdsenseReportsGenerateResponse response= ((AdSenseAPIResult)resultAPI).getResult();
+			
+			if (response.getRows() != null && !response.getRows().isEmpty())
+			{
+				for (List<String> row : response.getRows())
+				{
+					if(App.LOCAL_LOGV)
+						Log.v(App.TAG, String.valueOf(row.size()));
+					
+					for (String column : row)
+					{
+						if(App.LOCAL_LOGV)
+							Log.v(App.TAG, "adding value" + column);
+						sb.append(column);
+					}
+				}
+
+			}
+			else
+			{
+				Log.d(App.TAG,"No rows returned");
+			}
 
 //			GaData results = resultAPI.getResult();
 //
@@ -179,12 +200,12 @@ public class DashAdsense extends DashClockExtension
 			try
 			{
 				// publishUpdate(new ExtensionData().visible(true).status(resultAPI.getResultMessage()).icon(R.drawable.ic_dashclock).expandedTitle(String.format(getString(R.string.title_display_format), getString(metricIdentifier), getString(periodIdentifier), result)).expandedBody(String.format(getString(R.string.body_display_format), profileName, selectedProperty)));
-				publishUpdate(new ExtensionData().visible(true).status(resultAPI.getResultMessage()).icon(R.drawable.ic_dashclock).expandedTitle(resultAPI.getResultMessage()));
+				// publishUpdate(new ExtensionData().visible(true).status(resultAPI.getResultMessage()).icon(R.drawable.ic_dashclock).expandedTitle(resultAPI.getResultMessage()));
 			}
 			catch (Exception e)
 			{
 
-				Log.e(App.TAG, "Exception while published:" + e.getMessage());
+				Log.e(App.TAG_ADSENSE, "Exception while published:" + e.getMessage());
 			}
 
 		}

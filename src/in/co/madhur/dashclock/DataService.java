@@ -3,7 +3,6 @@ package in.co.madhur.dashclock;
 import in.co.madhur.dashclock.API.AccountResult;
 import in.co.madhur.dashclock.Consts.APIOperation;
 import in.co.madhur.dashclock.Consts.API_STATUS;
-import in.co.madhur.dashclock.dashadsense.AdsenseDataService.APIManagementTask;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;

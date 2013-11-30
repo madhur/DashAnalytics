@@ -4,28 +4,21 @@ import com.google.api.services.analytics.model.GaData;
 
 import in.co.madhur.dashclock.Consts.API_STATUS;
 
-public class APIResult
+public  class APIResult
 {
-	private String errorMessage;
-	private API_STATUS status;
-	private GaData result;
-	private String resultMessage;
+	protected String errorMessage;
+	protected API_STATUS status;
 	
-	public APIResult(API_STATUS status, GaData result, String errorMessage)
+	public APIResult()
 	{
-		if(status==API_STATUS.FAILURE)
-			this.errorMessage=errorMessage;
-		else if(status==API_STATUS.SUCCESS)
-			this.result=result;
+		
 		
 	}
 	
-	public APIResult(API_STATUS status, String result)
+	public APIResult(String errorMessage)
 	{
-		if(status==API_STATUS.FAILURE)
-			this.errorMessage=result;
-		else if(status==API_STATUS.SUCCESS)
-			this.resultMessage=result;
+		this.status=API_STATUS.FAILURE;
+		this.errorMessage=errorMessage;
 		
 	}
 	
@@ -49,24 +42,5 @@ public class APIResult
 		this.status = status;
 	}
 	
-	public GaData getResult()
-	{
-		return result;
-	}
-	
-	public void setResult(GaData result)
-	{
-		this.result = result;
-	}
-
-	public String getResultMessage()
-	{
-		return resultMessage;
-	}
-
-	public void setResultMessage(String resultMessage)
-	{
-		this.resultMessage = resultMessage;
-	}
 
 }

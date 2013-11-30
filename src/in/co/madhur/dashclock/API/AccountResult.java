@@ -1,6 +1,5 @@
 package in.co.madhur.dashclock.API;
 
-import in.co.madhur.dashclock.Consts;
 import in.co.madhur.dashclock.Consts.API_STATUS;
 
 import java.util.ArrayList;

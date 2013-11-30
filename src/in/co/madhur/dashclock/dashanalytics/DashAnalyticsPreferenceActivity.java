@@ -3,7 +3,6 @@ package in.co.madhur.dashclock.dashanalytics;
 import in.co.madhur.dashclock.AppPreferences;
 import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.AppPreferences.Keys;
-import in.co.madhur.dashclock.R.xml;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;

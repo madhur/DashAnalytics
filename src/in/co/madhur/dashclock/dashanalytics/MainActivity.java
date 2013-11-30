@@ -1,12 +1,10 @@
 package in.co.madhur.dashclock.dashanalytics;
 
-import in.co.madhur.dashclock.App;
 import in.co.madhur.dashclock.BaseActivity;
 import in.co.madhur.dashclock.MyBaseAdapter;
 import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.API.GProfile;
-import in.co.madhur.dashclock.API.GProperty;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 
 import java.util.ArrayList;
@@ -23,8 +21,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 public class MainActivity extends BaseActivity

@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 public abstract class AppPreferences

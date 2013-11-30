@@ -12,9 +12,6 @@ import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.APIResult;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import in.co.madhur.dashclock.Consts.API_STATUS;
-import in.co.madhur.dashclock.R.drawable;
-import in.co.madhur.dashclock.R.string;
-
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -111,17 +108,17 @@ public class DashAnalytics extends DashClockExtension
 						+ params[0], params[2], params[2], "ga:" + params[1]);
 				Log.d(App.TAG, apiQuery.toString());
 				
-				return new APIResult(API_STATUS.SUCCESS, apiQuery.execute(), null);
+				return new AnalyticsAPIResult(apiQuery.execute());
 			}
 			catch(UnknownHostException e)
 			{
 				Log.e(App.TAG, "Exception unknownhost in doInBackground" + e.getMessage());
-				return new APIResult(API_STATUS.FAILURE,  e.getMessage());
+				return new APIResult(e.getMessage());
 			}
 			catch (Exception e)
 			{
 				Log.e(App.TAG, "Exception in doInBackground" + e.getMessage());
-				return new APIResult(API_STATUS.FAILURE,  e.getMessage());
+				return new APIResult(e.getMessage());
 			}
 		}
 
@@ -132,7 +129,7 @@ public class DashAnalytics extends DashClockExtension
 			if(resultAPI.getStatus()==API_STATUS.FAILURE)
 				return;
 			
-			GaData results= resultAPI.getResult();
+			GaData results= ((AnalyticsAPIResult)resultAPI).getResult();
 			
 			String profileName = appPreferences.getMetadata(Keys.PROFILE_NAME);
 			String selectedProperty = appPreferences.getMetadata(Keys.PROPERTY_NAME);

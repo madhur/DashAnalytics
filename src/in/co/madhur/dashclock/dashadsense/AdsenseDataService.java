@@ -6,7 +6,6 @@ import in.co.madhur.dashclock.API.AccountResult;
 import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.Consts.APIOperation;
 import in.co.madhur.dashclock.Consts.API_STATUS;
-import in.co.madhur.dashclock.dashadsense.google.GetAllAccounts;
 import java.util.ArrayList;
 
 import org.json.JSONObject;
@@ -64,6 +63,7 @@ public class AdsenseDataService extends DataService
 					{
 						for (Account account : accounts.getItems())
 						{
+							if(App.LOCAL_LOGV)
 							Log.d(App.TAG, "Account with ID \"%s\" and name \"%s\" was found.\n"
 									+ account.getId() + account.getName());
 
@@ -77,8 +77,6 @@ public class AdsenseDataService extends DataService
 					pageToken = accounts.getNextPageToken();
 				}
 				while (pageToken != null);
-
-			
 
 			}
 			catch (GoogleJsonResponseException e)

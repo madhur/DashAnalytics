@@ -5,8 +5,22 @@
         <item>@string/today</item>
         <item>@string/yesterday</item>
     </string-array>
+    
+     <string-array name="pref_adsense_period">
+        <item>@string/today</item>
+        <item>@string/yesterday</item>
+        <item>@string/thismonth</item>
+        <item>@string/lastmonth</item>
+    </string-array>
 
-    <string-array name="pref_period_values">
+    <string-array name="pref_adsense_period_values">
+        <item>today</item>
+        <item>yesterday</item>
+        <item>thismonth</item>
+        <item>lastmonth</item>
+    </string-array>
+    
+      <string-array name="pref_period_values">
         <item>today</item>
         <item>yesterday</item>
     </string-array>

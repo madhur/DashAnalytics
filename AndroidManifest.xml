@@ -90,7 +90,7 @@
                 android:value="true" />
             <meta-data
                 android:name="description"
-                android:value="@string/extension_description" />
+                android:value="@string/adsense_extension_description" />
             <!-- A settings activity is optional -->
             <meta-data
                 android:name="settingsActivity"

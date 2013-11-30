@@ -10,6 +10,8 @@
     <string name="txtSelectMetric">Metric</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+    <string name="thismonth">This month</string>
+    <string name="lastmonth">Last month</string>
     <string name="visits">Visits</string>
     <string name="visitors">Visitors</string>
     <string name="newVisits">New visits</string>
@@ -43,5 +45,6 @@
     <string name="pref_select_metric_desc">Select Metric to be displayed</string>
     <string name="pref_disp_lastupdatetime">Display Last Update time</string>
     <string name="pref_disp_lastupdatetime_desc">If Selected, displays the last successful update time</string>
+    <string name="adsense_extension_description">Displays Google Adsense earnings on Dashclock widget</string>
 
 </resources>
