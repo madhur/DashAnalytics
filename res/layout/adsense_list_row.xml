@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<in.co.madhur.dashclock.CheckedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+     android:minHeight="60dp" >
+
+    <in.co.madhur.dashclock.InertCheckBox
+        android:id="@+id/radioselect"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:focusable="false"
+        android:onClick="profileSelected"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/property_name_adsense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_toRightOf="@id/radioselect"
+        android:text="Header"
+        android:textStyle="bold"
+        android:textColor="@color/app_text_main_light_color"
+        android:textSize="@dimen/text_size_large" />
+
+</in.co.madhur.dashclock.CheckedLinearLayout>

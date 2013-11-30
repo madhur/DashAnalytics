@@ -1,7 +1,6 @@
 package in.co.madhur.dashclock.dashanalytics;
 
 import in.co.madhur.dashclock.App;
-import in.co.madhur.dashclock.Consts;
 import in.co.madhur.dashclock.DataService;
 import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.AccountResult;
@@ -10,10 +9,6 @@ import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.API.GProfile;
 import in.co.madhur.dashclock.API.GProperty;
 import in.co.madhur.dashclock.Consts.APIOperation;
-import in.co.madhur.dashclock.Consts.API_STATUS;
-import in.co.madhur.dashclock.R.string;
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +21,10 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.model.Accounts;
 import com.google.api.services.analytics.model.Profiles;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+//import com.google.common.collect.ArrayListMultimap;
+//import com.google.common.collect.ListMultimap;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 public class AnalyticsDataService extends DataService
 {
@@ -46,11 +35,7 @@ public class AnalyticsDataService extends DataService
 
 		new APIManagementTask().execute(APIOperation.SELECT_ACCOUNT);
 	}
-
 	
-
-
-
 	private class APIManagementTask extends
 			DataService.APIManagementTask
 	{
@@ -65,7 +50,7 @@ public class AnalyticsDataService extends DataService
 			String WebpropertyId;
 			String Id, accountName, propertyName, profileName;
 
-			ListMultimap<GProperty, GProfile> propertiesMap = ArrayListMultimap.create();
+			// ListMultimap<GProperty, GProfile> propertiesMap = ArrayListMultimap.create();
 			List<GAccount> gAccounts = new ArrayList<GAccount>();
 
 			boolean isApp;
@@ -175,7 +160,7 @@ public class AnalyticsDataService extends DataService
 								gAccounts.get(i).getProperties().get(j).getProfiles().add(gProfile);
 
 								acProfiles.add(new GNewProfile(Id, accountName, WebpropertyId, propertyName, Profile_Id, profileName, isApp));
-								propertiesMap.put(gProperty, gProfile);
+								// propertiesMap.put(gProperty, gProfile);
 
 							}
 						}

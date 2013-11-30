@@ -2,6 +2,7 @@ package in.co.madhur.dashclock.dashanalytics;
 
 import in.co.madhur.dashclock.App;
 import in.co.madhur.dashclock.BaseActivity;
+import in.co.madhur.dashclock.MyBaseAdapter;
 import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.API.GProfile;
@@ -16,9 +17,10 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.AnalyticsScopes;
-import com.google.common.collect.ListMultimap;
+//import com.google.common.collect.ListMultimap;
 import android.app.ActionBar.OnNavigationListener;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,11 +30,10 @@ import android.widget.Toast;
 public class MainActivity extends BaseActivity
 
 {
-	
+
 	private Analytics analytics_service;
-	
-	
-	ListMultimap<GProperty, GProfile> propertiesMap;
+
+	//ListMultimap<GProperty, GProfile> propertiesMap;
 
 	OnNavigationListener listNavigator;
 
@@ -41,13 +42,10 @@ public class MainActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 
-		appPreferences=new AnalyticsPreferences(this);
-		
-		
+		appPreferences = new AnalyticsPreferences(this);
 
 		List<String> scopes = new ArrayList<String>();
 
-		
 		scopes.add(AnalyticsScopes.ANALYTICS_READONLY);
 
 		credential = GoogleAccountCredential.usingOAuth2(this, scopes);
@@ -72,68 +70,6 @@ public class MainActivity extends BaseActivity
 			setNavigationList(appPreferences.getUserName());
 		}
 	}
-	
-	@Override
-	protected void setNavigationList(String accountName)
-	{
-		super.setNavigationList(accountName);
-		
-		ArrayList<String> navItems = getAccountsList();
-		navItems.add("Add Account");
-		
-		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActionBar().getThemedContext(), R.layout.spinner_item, navItems);
-		adapter.setDropDownViewResource(R.layout.spinner_item_dropdown);
-
-		
-		if (accountName != null)
-		{
-			int index = navItems.indexOf(accountName);
-			if (index != -1)
-				getActionBar().setSelectedNavigationItem(index);
-			else
-				Log.e(App.TAG, "acount not found");
-		}
-		
-		
-		
-		getActionBar().setListNavigationCallbacks(adapter, new OnNavigationListener()
-		{
-
-			@Override
-			public boolean onNavigationItemSelected(int itemPosition, long itemId)
-			{
-				String selItem = adapter.getItem(itemPosition);
-
-				if (selItem.equals("Add Account"))
-				{
-					startAddGoogleAccountIntent();
-					return true;
-				}
-
-				if (getAccountsList().size() >= itemPosition)
-				{
-					if (App.LOCAL_LOGV)
-						Log.v(App.TAG, "Fetching accounts for:"
-								+ getAccountsList().get(itemPosition));
-
-					credential.setSelectedAccountName(getAccountsList().get(itemPosition));
-
-					setService();
-					if (analytics_service == null)
-						Log.e(App.TAG, "analytics service is null");
-
-					if (mBound)
-						unbindService(mConnection);
-
-					getAccounts();
-				}
-
-				return true;
-			}
-		});
-
-	}
-	
 
 	@Override
 	protected void PersistPreferences(GNewProfile newProfile, String accountEmail)
@@ -145,7 +81,6 @@ public class MainActivity extends BaseActivity
 
 	}
 	
-	@Override
 	protected void UpdateSelectionPreferences()
 	{
 		String accountId = appPreferences.getMetadata(Keys.ACCOUNT_ID);
@@ -168,6 +103,7 @@ public class MainActivity extends BaseActivity
 		}
 	}
 
+	
 
 	@Override
 	protected Analytics getService(GoogleAccountCredential credential)
@@ -175,21 +111,25 @@ public class MainActivity extends BaseActivity
 		return new Analytics.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).setApplicationName(getString(R.string.app_name)).build();
 
 	}
-	
 
 	@Override
 	protected void setService()
 	{
 		analytics_service = getService(credential);
-		
+
 	}
 
 	@Override
 	protected void setServiceObject()
 	{
-		((AnalyticsDataService)mService).analytics_service=analytics_service;
-		
+		((AnalyticsDataService) mService).analytics_service = analytics_service;
+
 	}
-	
+
+	@Override
+	protected MyBaseAdapter getListAdater(ArrayList<GNewProfile> acProfiles, Context baseActivity)
+	{
+		return new MyAdapter(acProfiles, baseActivity);
+	}
 
 }

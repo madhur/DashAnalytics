@@ -151,4 +151,14 @@ public abstract class AppPreferences
 
 	}
 
+	public void setMetadataMultiple(String accountId, String accountName, String accountEmail)
+	{
+		Editor editor = sharedPreferences.edit();
+		editor.putString(Keys.ACCOUNT_ID.key, accountId);
+		editor.putString(Keys.ACCOUNT_NAME.key, accountName);
+		editor.putString(Keys.USER_NAME.key, accountEmail);
+		editor.commit();
+		
+	}
+
 }

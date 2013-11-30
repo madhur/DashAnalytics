@@ -18,13 +18,8 @@ public abstract class DataService extends Service
 	protected IBinder binder = new LocalBinder();
 	public BaseActivity extensionActivity;
 	
-	public void showAccountsAsync()
-	{
-
-		new APIManagementTask().execute(APIOperation.SELECT_ACCOUNT);
-	}
-
-
+	public abstract void showAccountsAsync();
+	
 	public void showToast(final String toast)
 	{
 		extensionActivity.runOnUiThread(new Runnable()
@@ -40,7 +35,7 @@ public abstract class DataService extends Service
 
 	}
 	
-	public  class APIManagementTask extends
+	public abstract  class APIManagementTask extends
 	AsyncTask<APIOperation, Integer, AccountResult>
 	{
 		@Override
@@ -57,18 +52,14 @@ public abstract class DataService extends Service
 		{
 			super.onPostExecute(result);
 
-			App.getEventBus().post(result);
+			if(result!=null)
+				App.getEventBus().post(result);
 
 		}
 		
 
 		@Override
-		protected AccountResult doInBackground(APIOperation... params)
-		{
-			return null;
-		}
-		
-		
+		protected abstract AccountResult doInBackground(APIOperation... params);
 		
 	}
 

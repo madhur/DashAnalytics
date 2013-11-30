@@ -1,52 +1,22 @@
 package in.co.madhur.dashclock.dashanalytics;
 
 import in.co.madhur.dashclock.Consts;
+import in.co.madhur.dashclock.MyBaseAdapter;
 import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.GNewProfile;
-import in.co.madhur.dashclock.R.id;
-import in.co.madhur.dashclock.R.layout;
-
 import java.util.ArrayList;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
-public class MyAdapter extends BaseAdapter
+public class MyAdapter extends MyBaseAdapter
 {
-	ArrayList<GNewProfile> items;
-	Context context;
 	
 	public MyAdapter(ArrayList<GNewProfile> items, Context context)
 	{
-		this.items=items;
-		this.context=context;
-		
-		
-		
-	}
-
-	@Override
-	public int getCount()
-	{
-		return items.size();
-	}
-
-	
-	@Override
-	public Object getItem(int position)
-	{
-		return items.get(position);
-	}
-
-	@Override
-	public long getItemId(int position)
-	{
-		return position;
+		super(items, context);
 	}
 
 	@Override
@@ -76,12 +46,5 @@ public class MyAdapter extends BaseAdapter
 		
 		return vi;
 	}
-	
-	private static LayoutInflater GetInflater(Context context)
-	{
-
-		return (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
-
 	
 }

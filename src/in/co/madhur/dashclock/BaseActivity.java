@@ -3,11 +3,9 @@ package in.co.madhur.dashclock;
 import in.co.madhur.dashclock.API.AccountResult;
 import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.DataService.LocalBinder;
+import in.co.madhur.dashclock.dashadsense.AdsenseDataService;
 import in.co.madhur.dashclock.dashanalytics.AnalyticsDataService;
 import in.co.madhur.dashclock.dashanalytics.DashAnalyticsPreferenceActivity;
-import in.co.madhur.dashclock.dashanalytics.MyAdapter;
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -23,6 +21,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActionBar.OnNavigationListener;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -52,7 +52,7 @@ public abstract class BaseActivity extends Activity
 	protected boolean mBound = false;
 	protected static final int REQUEST_AUTHORIZATION = 2;
 	protected ArrayList<GNewProfile> acProfiles;
-	
+
 	protected ServiceConnection mConnection = new ServiceConnection()
 	{
 
@@ -73,13 +73,12 @@ public abstract class BaseActivity extends Activity
 			mBound = false;
 		}
 	};
-	
+
 	protected abstract void setServiceObject();
-	
+
 	protected void InitAccount()
 	{
-		
-		
+
 		int selectedIndex = getActionBar().getSelectedNavigationIndex();
 		String selectedAccount = getAccountsList().get(selectedIndex);
 
@@ -120,17 +119,15 @@ public abstract class BaseActivity extends Activity
 
 	}
 
-	
 	protected abstract void UpdateSelectionPreferences();
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_main2);
-		
+
 		int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
 		if (status != ConnectionResult.SUCCESS)
 		{
@@ -139,12 +136,12 @@ public abstract class BaseActivity extends Activity
 			finish();
 			return;
 		}
-		
+
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		listView = (ListView) findViewById(R.id.listview);
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		
+
 		listView.setOnItemClickListener(new OnItemClickListener()
 		{
 
@@ -152,7 +149,7 @@ public abstract class BaseActivity extends Activity
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
 
-				MyAdapter myAdapter = (MyAdapter) listView.getAdapter();
+				MyBaseAdapter myAdapter = (MyBaseAdapter) listView.getAdapter();
 				GNewProfile newProfile = (GNewProfile) myAdapter.getItem(position);
 
 				if (newProfile != null)
@@ -164,10 +161,9 @@ public abstract class BaseActivity extends Activity
 		});
 
 		App.getEventBus().register(new UpdateUIClass());
-		
 
 	}
-	
+
 	protected abstract void PersistPreferences(GNewProfile newProfile, String selectedAccountName);
 
 	protected void startAddGoogleAccountIntent()
@@ -177,7 +173,6 @@ public abstract class BaseActivity extends Activity
 		startActivity(addAccountIntent);
 	}
 
-	
 	protected ArrayList<String> getAccountsList()
 	{
 		ArrayList<String> accountList = new ArrayList<String>();
@@ -195,19 +190,67 @@ public abstract class BaseActivity extends Activity
 
 		return accountList;
 	}
-	
+
 	protected void setNavigationList(String accountName)
 	{
 		getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		getActionBar().setDisplayShowTitleEnabled(false);
 
-		
-	}
-	
-	protected abstract Object getService(GoogleAccountCredential credential2);
-	
+		ArrayList<String> navItems = getAccountsList();
+		navItems.add("Add Account");
 
-	
+		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActionBar().getThemedContext(), R.layout.spinner_item, navItems);
+		adapter.setDropDownViewResource(R.layout.spinner_item_dropdown);
+
+		if (accountName != null)
+		{
+			int index = navItems.indexOf(accountName);
+			if (index != -1)
+				getActionBar().setSelectedNavigationItem(index);
+			else
+				Log.e(App.TAG, "acount not found");
+		}
+
+		getActionBar().setListNavigationCallbacks(adapter, new OnNavigationListener()
+		{
+
+			@Override
+			public boolean onNavigationItemSelected(int itemPosition, long itemId)
+			{
+				String selItem = adapter.getItem(itemPosition);
+
+				if (selItem.equals("Add Account"))
+				{
+					startAddGoogleAccountIntent();
+					return true;
+				}
+
+				if (getAccountsList().size() >= itemPosition)
+				{
+					if (App.LOCAL_LOGV)
+						Log.v(App.TAG, "Fetching accounts for:"
+								+ getAccountsList().get(itemPosition));
+
+					credential.setSelectedAccountName(getAccountsList().get(itemPosition));
+
+					setService();
+
+					if (mBound)
+						unbindService(mConnection);
+
+					getAccounts();
+				}
+
+				return true;
+			}
+		});
+
+	}
+
+	protected abstract Object getService(GoogleAccountCredential credential2);
+
+	protected abstract MyBaseAdapter getListAdater(ArrayList<GNewProfile> acProfiles, Context baseActivity);
+
 	protected abstract void setService();
 
 	@Override
@@ -228,7 +271,7 @@ public abstract class BaseActivity extends Activity
 						// analytics_service = getService(credential);
 
 						setService();
-						
+
 						getAccounts();
 					}
 				}
@@ -250,7 +293,7 @@ public abstract class BaseActivity extends Activity
 				}
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -287,8 +330,7 @@ public abstract class BaseActivity extends Activity
 
 		return true;
 	}
-	
-	
+
 	@Override
 	protected void onStart()
 	{
@@ -309,20 +351,23 @@ public abstract class BaseActivity extends Activity
 		getMenuInflater().inflate(R.menu.main, (android.view.Menu) menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Subscribe
 	public void Notify(Intent reason)
 	{
 
 		startActivityForResult(reason, REQUEST_AUTHORIZATION);
 	}
-	
-	
-	
+
 	protected void getAccounts()
 	{
 		Intent i = new Intent();
-		i.setClass(this, AnalyticsDataService.class);
+		
+		if (this instanceof in.co.madhur.dashclock.dashanalytics.MainActivity)
+			i.setClass(this, AnalyticsDataService.class);
+		else if (this instanceof in.co.madhur.dashclock.dashadsense.MainActivity)
+			i.setClass(this, AdsenseDataService.class);
+		
 		bindService(i, mConnection, Context.BIND_AUTO_CREATE);
 
 	}
@@ -338,10 +383,10 @@ public abstract class BaseActivity extends Activity
 			mBound = false;
 		}
 	}
-	
-	private  class UpdateUIClass
+
+	private class UpdateUIClass
 	{
-		
+
 		@Subscribe
 		public void UpdateUI(AccountResult result)
 		{
@@ -376,7 +421,7 @@ public abstract class BaseActivity extends Activity
 					{
 						BaseActivity.this.acProfiles = result.getItems();
 
-						MyAdapter myAdapter = new MyAdapter(acProfiles, BaseActivity.this);
+						MyBaseAdapter myAdapter = getListAdater(acProfiles, BaseActivity.this);
 						listView.setAdapter(myAdapter);
 
 						UpdateSelectionPreferences();
@@ -402,9 +447,7 @@ public abstract class BaseActivity extends Activity
 			}
 
 		}
-		
-		
-	}
 
+	}
 
 }

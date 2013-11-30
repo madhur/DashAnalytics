@@ -6,10 +6,14 @@ import in.co.madhur.dashclock.API.AccountResult;
 import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.Consts.APIOperation;
 import in.co.madhur.dashclock.Consts.API_STATUS;
-import in.co.madhur.dashclock.dashadsense.google.GenerateReport1;
 import in.co.madhur.dashclock.dashadsense.google.GetAllAccounts;
 import java.util.ArrayList;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.adsense.AdSense;
 import com.google.api.services.adsense.model.Account;
 import com.google.api.services.adsense.model.Accounts;
@@ -18,6 +22,12 @@ import android.util.Log;
 public class AdsenseDataService extends DataService
 {
 	public AdSense adsense_service;
+	
+	public void showAccountsAsync()
+	{
+
+		new APIManagementTask().execute(APIOperation.SELECT_ACCOUNT);
+	}
 
 	public class APIManagementTask extends DataService.APIManagementTask
 	{
@@ -33,8 +43,8 @@ public class AdsenseDataService extends DataService
 			if (adsense_service == null)
 			{
 
-				Log.e(App.TAG, "Analytics service object isn null");
-				return null;
+				Log.e(App.TAG, "Adsense service object isn null");
+				return new AccountResult(API_STATUS.FAILURE);
 			}
 
 			String pageToken = null;
@@ -68,9 +78,31 @@ public class AdsenseDataService extends DataService
 				}
 				while (pageToken != null);
 
-				GenerateReport1.run(adsense, null);
+			
 
 			}
+			catch (GoogleJsonResponseException e)
+			{
+
+				String message = e.getStatusMessage();
+				Log.e(App.TAG, e.getMessage());
+
+				try
+				{
+					Log.v(App.TAG, e.getMessage().substring(e.getMessage().indexOf("{")));
+					JSONObject json = new JSONObject(new JSONTokener(e.getMessage().substring(e.getMessage().indexOf("{"))));
+					JSONObject error = json.getJSONArray("errors").getJSONObject(0);
+					message = error.getString("message");
+				}
+				catch (Exception ee)
+				{
+
+					Log.e(App.TAG, ee.getMessage());
+				}
+
+				return new AccountResult(message);
+			}
+
 			catch (UserRecoverableAuthIOException e)
 			{
 				AdsenseDataService.this.extensionActivity.startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
@@ -78,7 +110,7 @@ public class AdsenseDataService extends DataService
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				Log.e(App.TAG, e.getMessage());
 			}
 
 			return new AccountResult(acProfiles, true);

@@ -9,6 +9,7 @@ public class APIResult
 	private String errorMessage;
 	private API_STATUS status;
 	private GaData result;
+	private String resultMessage;
 	
 	public APIResult(API_STATUS status, GaData result, String errorMessage)
 	{
@@ -16,6 +17,15 @@ public class APIResult
 			this.errorMessage=errorMessage;
 		else if(status==API_STATUS.SUCCESS)
 			this.result=result;
+		
+	}
+	
+	public APIResult(API_STATUS status, String result)
+	{
+		if(status==API_STATUS.FAILURE)
+			this.errorMessage=result;
+		else if(status==API_STATUS.SUCCESS)
+			this.resultMessage=result;
 		
 	}
 	
@@ -47,6 +57,16 @@ public class APIResult
 	public void setResult(GaData result)
 	{
 		this.result = result;
+	}
+
+	public String getResultMessage()
+	{
+		return resultMessage;
+	}
+
+	public void setResultMessage(String resultMessage)
+	{
+		this.resultMessage = resultMessage;
 	}
 
 }

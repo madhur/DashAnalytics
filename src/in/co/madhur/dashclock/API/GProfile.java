@@ -38,5 +38,15 @@ public class GProfile extends GType
 	    }
 	    return -1;
 	}
+	
+	public static int getItemPositionByAccountId(ArrayList<GNewProfile> items, final String id)
+	{
+	    for (int i = 0; i < items.size(); i++)
+	    {
+	        if (((GNewProfile)items.get(i)).getAccountId().equals(id))
+	            return i;
+	    }
+	    return -1;
+	}
 
 }

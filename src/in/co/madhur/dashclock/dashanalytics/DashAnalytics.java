@@ -116,12 +116,12 @@ public class DashAnalytics extends DashClockExtension
 			catch(UnknownHostException e)
 			{
 				Log.e(App.TAG, "Exception unknownhost in doInBackground" + e.getMessage());
-				return new APIResult(API_STATUS.FAILURE, null, e.getMessage());
+				return new APIResult(API_STATUS.FAILURE,  e.getMessage());
 			}
 			catch (Exception e)
 			{
 				Log.e(App.TAG, "Exception in doInBackground" + e.getMessage());
-				return new APIResult(API_STATUS.FAILURE, null, e.getMessage());
+				return new APIResult(API_STATUS.FAILURE,  e.getMessage());
 			}
 		}
 
