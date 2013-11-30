@@ -1,0 +1,410 @@
+package in.co.madhur.dashclock;
+
+import in.co.madhur.dashclock.API.AccountResult;
+import in.co.madhur.dashclock.API.GNewProfile;
+import in.co.madhur.dashclock.DataService.LocalBinder;
+import in.co.madhur.dashclock.dashanalytics.AnalyticsDataService;
+import in.co.madhur.dashclock.dashanalytics.DashAnalyticsPreferenceActivity;
+import in.co.madhur.dashclock.dashanalytics.MyAdapter;
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.squareup.otto.Subscribe;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+public abstract class BaseActivity extends Activity
+{
+	protected AppPreferences appPreferences;
+	protected ListView listView;
+	protected static final int REQUEST_ACCOUNT_PICKER = 1;
+	protected GoogleAccountCredential credential;
+	protected DataService mService;
+	protected boolean mBound = false;
+	protected static final int REQUEST_AUTHORIZATION = 2;
+	protected ArrayList<GNewProfile> acProfiles;
+	
+	protected ServiceConnection mConnection = new ServiceConnection()
+	{
+
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service)
+		{
+			LocalBinder binder = (LocalBinder) service;
+			mService = binder.getService(BaseActivity.this);
+			setServiceObject();
+			mBound = true;
+
+			InitAccount();
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0)
+		{
+			mBound = false;
+		}
+	};
+	
+	protected abstract void setServiceObject();
+	
+	protected void InitAccount()
+	{
+		
+		
+		int selectedIndex = getActionBar().getSelectedNavigationIndex();
+		String selectedAccount = getAccountsList().get(selectedIndex);
+
+		try
+		{
+			acProfiles = (ArrayList<GNewProfile>) appPreferences.getConfigData(selectedAccount);
+
+		}
+		catch (JsonParseException e)
+		{
+			Log.e(App.TAG, e.getMessage());
+		}
+		catch (JsonMappingException e)
+		{
+			Log.e(App.TAG, e.getMessage());
+		}
+		catch (IOException e)
+		{
+			Log.e(App.TAG, e.getMessage());
+		}
+
+		if (acProfiles == null)
+		{
+			if (App.LOCAL_LOGV)
+				Log.v(App.TAG, "Initing accounts from net for "
+						+ selectedAccount);
+			mService.showAccountsAsync();
+		}
+		else
+		{
+			if (App.LOCAL_LOGV)
+				Log.v(App.TAG, "Initing accounts from cache for "
+						+ selectedAccount);
+
+			new UpdateUIClass().UpdateUI(new AccountResult(acProfiles, false));
+			UpdateSelectionPreferences();
+		}
+
+	}
+
+	
+	protected abstract void UpdateSelectionPreferences();
+
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.activity_main2);
+		
+		int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+		if (status != ConnectionResult.SUCCESS)
+		{
+			Log.e(App.TAG, String.valueOf(status));
+			Toast.makeText(this, getString(R.string.gps_missing), Toast.LENGTH_LONG).show();
+			finish();
+			return;
+		}
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+
+		listView = (ListView) findViewById(R.id.listview);
+		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		
+		listView.setOnItemClickListener(new OnItemClickListener()
+		{
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+			{
+
+				MyAdapter myAdapter = (MyAdapter) listView.getAdapter();
+				GNewProfile newProfile = (GNewProfile) myAdapter.getItem(position);
+
+				if (newProfile != null)
+				{
+					PersistPreferences(newProfile, credential.getSelectedAccountName());
+				}
+
+			}
+		});
+
+		App.getEventBus().register(new UpdateUIClass());
+		
+
+	}
+	
+	protected abstract void PersistPreferences(GNewProfile newProfile, String selectedAccountName);
+
+	protected void startAddGoogleAccountIntent()
+	{
+		Intent addAccountIntent = new Intent(android.provider.Settings.ACTION_ADD_ACCOUNT).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		addAccountIntent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[] { "com.google" });
+		startActivity(addAccountIntent);
+	}
+
+	
+	protected ArrayList<String> getAccountsList()
+	{
+		ArrayList<String> accountList = new ArrayList<String>();
+
+		AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+		Account[] list = manager.getAccounts();
+
+		for (Account account : list)
+		{
+			if (account.type.equalsIgnoreCase("com.google"))
+			{
+				accountList.add(account.name);
+			}
+		}
+
+		return accountList;
+	}
+	
+	protected void setNavigationList(String accountName)
+	{
+		getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		getActionBar().setDisplayShowTitleEnabled(false);
+
+		
+	}
+	
+	protected abstract Object getService(GoogleAccountCredential credential2);
+	
+
+	
+	protected abstract void setService();
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data)
+	{
+		switch (requestCode)
+		{
+			case REQUEST_ACCOUNT_PICKER:
+				if (resultCode == RESULT_OK && data != null
+						&& data.getExtras() != null)
+				{
+					String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+					if (accountName != null)
+					{
+						setNavigationList(accountName);
+
+						credential.setSelectedAccountName(accountName);
+						// analytics_service = getService(credential);
+
+						setService();
+						
+						getAccounts();
+					}
+				}
+				else if (resultCode == RESULT_CANCELED)
+				{
+
+					setNavigationList(null);
+				}
+
+				break;
+			case REQUEST_AUTHORIZATION:
+				if (resultCode == Activity.RESULT_OK)
+				{
+					getAccounts();
+				}
+				else
+				{
+					startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
+				}
+		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.action_refresh:
+				if (!mBound || mService == null)
+				{
+					Toast.makeText(this, getString(R.string.gps_missing), Toast.LENGTH_LONG).show();
+
+					return true;
+
+				}
+
+				if (Connection.isConnected(this))
+				{
+					mService.showAccountsAsync();
+				}
+				else
+					Toast.makeText(this, getString(R.string.network_not_connected), Toast.LENGTH_SHORT).show();
+
+				break;
+
+			case R.id.action_settings:
+				Intent i = new Intent();
+				i.setClass(this, DashAnalyticsPreferenceActivity.class);
+				startActivity(i);
+				break;
+
+			default:
+				return super.onOptionsItemSelected(item);
+
+		}
+
+		return true;
+	}
+	
+	
+	@Override
+	protected void onStart()
+	{
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.main, (android.view.Menu) menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Subscribe
+	public void Notify(Intent reason)
+	{
+
+		startActivityForResult(reason, REQUEST_AUTHORIZATION);
+	}
+	
+	
+	
+	protected void getAccounts()
+	{
+		Intent i = new Intent();
+		i.setClass(this, AnalyticsDataService.class);
+		bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+
+		if (mBound)
+		{
+			unbindService(mConnection);
+			mBound = false;
+		}
+	}
+	
+	private  class UpdateUIClass
+	{
+		
+		@Subscribe
+		public void UpdateUI(AccountResult result)
+		{
+			ProgressBar progressbar = (ProgressBar) findViewById(R.id.pbHeaderProgress);
+			LinearLayout spinnerLayout = (LinearLayout) findViewById(R.id.spinnerslayout);
+			TextView statusMessage = (TextView) findViewById(R.id.statusMessage);
+
+			switch (result.getStatus())
+			{
+				case STARTING:
+					statusMessage.setVisibility(View.GONE);
+					progressbar.setVisibility(View.VISIBLE);
+					spinnerLayout.setVisibility(View.GONE);
+
+					break;
+
+				case FAILURE:
+					statusMessage.setVisibility(View.VISIBLE);
+					progressbar.setVisibility(View.GONE);
+					spinnerLayout.setVisibility(View.GONE);
+					statusMessage.setText(result.getErrorMessage());
+
+					break;
+
+				case SUCCESS:
+
+					statusMessage.setVisibility(View.GONE);
+					progressbar.setVisibility(View.GONE);
+					spinnerLayout.setVisibility(View.VISIBLE);
+
+					if (result.getItems() != null)
+					{
+						BaseActivity.this.acProfiles = result.getItems();
+
+						MyAdapter myAdapter = new MyAdapter(acProfiles, BaseActivity.this);
+						listView.setAdapter(myAdapter);
+
+						UpdateSelectionPreferences();
+
+						if (result.isPersist() && acProfiles.size() > 0)
+						{
+							if (App.LOCAL_LOGV)
+								Log.v(App.TAG, "saving configdata");
+
+							try
+							{
+								appPreferences.saveConfigData(acProfiles, credential.getSelectedAccountName());
+							}
+							catch (JsonProcessingException e)
+							{
+								Log.e(App.TAG, e.getMessage());
+							}
+						}
+
+					}
+
+					break;
+			}
+
+		}
+		
+		
+	}
+
+
+}
