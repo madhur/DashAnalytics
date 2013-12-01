@@ -34,6 +34,7 @@ public abstract class AppPreferences
 		PROFILE_NAME("profile_name"),
 		METRIC_ID("metric_id"),
 		PERIOD_ID("period_id"),
+		USE_LOCAL_TIME("pref_adsense_usetimezonee"),
 		AUTH_TOKEN("pref_auth_token");
 
 		public final String key;
@@ -96,6 +97,11 @@ public abstract class AppPreferences
 
 		return gAccounts;
 
+	}
+	
+	public boolean isLocalTime()
+	{
+		return sharedPreferences.getBoolean(Keys.USE_LOCAL_TIME.key, true);
 	}
 
 	public void setMetadata(Keys key, String value)

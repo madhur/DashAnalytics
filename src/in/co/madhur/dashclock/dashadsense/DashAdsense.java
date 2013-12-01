@@ -1,6 +1,5 @@
 package in.co.madhur.dashclock.dashadsense;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +10,6 @@ import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.APIResult;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import in.co.madhur.dashclock.Consts.API_STATUS;
-import in.co.madhur.dashclock.dashanalytics.AnalyticsAPIResult;
-
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,7 +22,6 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.adsense.AdSense;
 import com.google.api.services.adsense.AdSenseScopes;
 import com.google.api.services.adsense.model.AdsenseReportsGenerateResponse;
-import com.google.api.services.analytics.model.GaData;
 
 public class DashAdsense extends DashClockExtension
 {
@@ -33,6 +29,7 @@ public class DashAdsense extends DashClockExtension
 	String AccountId, metricKey, periodKey;
 	private GoogleAccountCredential credential;
 	private AdSense adsense_service;
+	boolean isLocaltime;
 	List<String> scopes = new ArrayList<String>();
 
 	@Override
@@ -62,6 +59,7 @@ public class DashAdsense extends DashClockExtension
 
 		AccountId = appPreferences.getMetadata(Keys.ACCOUNT_ID);
 		periodKey = appPreferences.getMetadata(Keys.PERIOD_ID);
+		isLocaltime=appPreferences.isLocalTime();
 
 		if (TextUtils.isEmpty(AccountId))
 		{
@@ -74,7 +72,7 @@ public class DashAdsense extends DashClockExtension
 			if (App.LOCAL_LOGV)
 				Log.v(App.TAG_ADSENSE, "Firing update:" + String.valueOf(arg0));
 
-			 new APIResultTask().execute(AccountId, periodKey);
+			 new APIResultTask().execute(AccountId, periodKey, String.valueOf(isLocaltime));
 		}
 		else
 			Log.d(App.TAG_ADSENSE, "No network, postponing update");
@@ -106,7 +104,7 @@ public class DashAdsense extends DashClockExtension
 			AdsenseReportsGenerateResponse result = null;
 			try
 			{
-				result = GenerateReport.run(adsense_service, null);
+				result = GenerateReport.run(adsense_service, params[1], params[2]);
 			}
 			catch (Exception e)
 			{
@@ -123,6 +121,7 @@ public class DashAdsense extends DashClockExtension
 		protected void onPostExecute(APIResult resultAPI)
 		{
 			StringBuilder sb=new StringBuilder();
+
 			// Do not do anything if there is a failure, could be network
 			// condition.
 			if (resultAPI.getStatus() == API_STATUS.FAILURE)
@@ -135,12 +134,12 @@ public class DashAdsense extends DashClockExtension
 				for (List<String> row : response.getRows())
 				{
 					if(App.LOCAL_LOGV)
-						Log.v(App.TAG, String.valueOf(row.size()));
+						Log.v(App.TAG_ADSENSE, String.valueOf(row.size()));
 					
 					for (String column : row)
 					{
 						if(App.LOCAL_LOGV)
-							Log.v(App.TAG, "adding value" + column);
+							Log.v(App.TAG_ADSENSE, "adding value" + column);
 						sb.append(column);
 					}
 				}
@@ -148,8 +147,11 @@ public class DashAdsense extends DashClockExtension
 			}
 			else
 			{
-				Log.d(App.TAG,"No rows returned");
+				Log.d(App.TAG_ADSENSE,"No rows returned");
 			}
+			
+			if(TextUtils.isEmpty(sb.toString()))
+				return;
 
 //			GaData results = resultAPI.getResult();
 //
@@ -157,7 +159,7 @@ public class DashAdsense extends DashClockExtension
 //			String selectedProperty = appPreferences.getMetadata(Keys.PROPERTY_NAME);
 //			String metricKey = appPreferences.getMetadata(Keys.METRIC_ID);
 //			int metricIdentifier = getResources().getIdentifier(metricKey, "string", DashAdsense.this.getPackageName());
-//			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAdsense.this.getPackageName());
+			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAdsense.this.getPackageName());
 //			String result;
 //
 //			if (App.LOCAL_LOGV)
@@ -199,8 +201,8 @@ public class DashAdsense extends DashClockExtension
 
 			try
 			{
-				// publishUpdate(new ExtensionData().visible(true).status(resultAPI.getResultMessage()).icon(R.drawable.ic_dashclock).expandedTitle(String.format(getString(R.string.title_display_format), getString(metricIdentifier), getString(periodIdentifier), result)).expandedBody(String.format(getString(R.string.body_display_format), profileName, selectedProperty)));
-				// publishUpdate(new ExtensionData().visible(true).status(resultAPI.getResultMessage()).icon(R.drawable.ic_dashclock).expandedTitle(resultAPI.getResultMessage()));
+				 publishUpdate(new ExtensionData().visible(true).status(sb.toString()).icon(R.drawable.ic_dashclock).expandedTitle(String.format(getString(R.string.adsense_title_display_format),  getString(periodIdentifier), sb.toString())));
+				 
 			}
 			catch (Exception e)
 			{
@@ -212,14 +214,14 @@ public class DashAdsense extends DashClockExtension
 
 	}
 
-	private static String fmt(double d)
-	{
-		if (d == (int) d)
-			return String.format("%d", (int) d);
-		else
-		{
-			return new DecimalFormat("#.##").format(d);
-		}
-	}
+//	private static String fmt(double d)
+//	{
+//		if (d == (int) d)
+//			return String.format("%d", (int) d);
+//		else
+//		{
+//			return new DecimalFormat("#.##").format(d);
+//		}
+//	}
 
 }

@@ -1,4 +1,4 @@
-package in.co.madhur.dashclock.dashanalytics;
+package in.co.madhur.dashclock.dashadsense;
 
 import in.co.madhur.dashclock.BasePreferenceActivity;
 import in.co.madhur.dashclock.R;
@@ -6,17 +6,16 @@ import in.co.madhur.dashclock.AppPreferences.Keys;
 import android.os.Bundle;
 import android.preference.ListPreference;
 
-public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
+public class DashAdSensePreferenceActivity extends BasePreferenceActivity
 {
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
-		appPreferences = new AnalyticsPreferences(this);
-		addPreferencesFromResource(R.xml.preference);
+		appPreferences = new AdSensePreferences(this);
+		addPreferencesFromResource(R.xml.adsense_preference);
 	}
 
 	@Override
@@ -24,14 +23,13 @@ public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 	{
 		super.onResume();
 
-		UpdateLabel((ListPreference) findPreference(Keys.METRIC_ID.key), null);
 		UpdateLabel((ListPreference) findPreference(Keys.PERIOD_ID.key), null);
 	}
+
 
 	@Override
 	protected void SetListeners()
 	{
-		findPreference(Keys.METRIC_ID.key).setOnPreferenceChangeListener(listPreferenceChangeListerner);
 
 		findPreference(Keys.PERIOD_ID.key).setOnPreferenceChangeListener(listPreferenceChangeListerner);
 

@@ -318,9 +318,7 @@ public abstract class BaseActivity extends Activity
 				break;
 
 			case R.id.action_settings:
-				Intent i = new Intent();
-				i.setClass(this, DashAnalyticsPreferenceActivity.class);
-				startActivity(i);
+				startActivity(getPreferenceIntent());
 				break;
 
 			default:
@@ -330,6 +328,8 @@ public abstract class BaseActivity extends Activity
 
 		return true;
 	}
+	
+	protected abstract Intent getPreferenceIntent();
 
 	@Override
 	protected void onStart()

@@ -37,6 +37,7 @@
     <string name="extension_title">DashAnalytics</string>
     <string name="extension_description">Display Google Analytics metric on Dashclock widget</string>
     <string name="title_display_format" formatted="false">%s %s: %s</string>
+    <string name="adsense_title_display_format" formatted="false">Earnings %s: %s</string>
     <string name="body_display_format" formatted="false">%s (%s)</string>
     <string name="dashanalytics_preferences">DashAnalytics Preferences</string>
     <string name="pref_select_period">Select Period</string>
@@ -46,5 +47,7 @@
     <string name="pref_disp_lastupdatetime">Display Last Update time</string>
     <string name="pref_disp_lastupdatetime_desc">If Selected, displays the last successful update time</string>
     <string name="adsense_extension_description">Displays Google Adsense earnings on Dashclock widget</string>
+    <string name="pref_adsense_usetimezonee">Use Time zone reporting</string>
+    <string name="pref_adsense_usetimezonee_desc">Whether the earnings should be displayed in the AdSense account\'s local timezone. If false default PST timezone will be used</string>
 
 </resources>

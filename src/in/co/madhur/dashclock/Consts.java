@@ -8,7 +8,7 @@ public class Consts
 
 	public enum APIPeriod
 	{
-		TODAY("today"), YESTERDAY("yesterday");
+		TODAY("today"), YESTERDAY("yesterday"), THISMONTH("thismonth"), LASTMONTH("lastmonth");
 
 		private String key;
 

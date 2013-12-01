@@ -18,6 +18,7 @@ import com.google.api.services.adsense.AdSenseScopes;
 import android.app.ActionBar.OnNavigationListener;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -120,6 +121,15 @@ public class MainActivity extends BaseActivity
 	protected MyBaseAdapter getListAdater(ArrayList<GNewProfile> acProfiles, Context baseActivity)
 	{
 		return new MyAdapter(acProfiles, baseActivity);
+	}
+
+
+	@Override
+	protected Intent getPreferenceIntent()
+	{
+		Intent i=new Intent();
+		i.setClass(this, DashAdSensePreferenceActivity.class);
+		return i;
 	}
 
 }
