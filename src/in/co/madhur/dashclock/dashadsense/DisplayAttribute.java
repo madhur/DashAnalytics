@@ -2,6 +2,7 @@ package in.co.madhur.dashclock.dashadsense;
 
 import java.text.NumberFormat;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import in.co.madhur.dashclock.App;
@@ -54,6 +55,12 @@ public class DisplayAttribute
 
 	public String getFormattedValue()
 	{
+		if(TextUtils.isEmpty(value))
+		{
+			Log.d(App.TAG_ADSENSE, "Encountered null value");
+			value="0";
+		}
+		
 		try
 		{
 			switch (type)

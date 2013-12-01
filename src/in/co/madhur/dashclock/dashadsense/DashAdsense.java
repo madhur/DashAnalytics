@@ -37,33 +37,19 @@ public class DashAdsense extends DashClockExtension
 	private AdSense adsense_service;
 	boolean isLocaltime, showCurrency;
 	List<String> scopes = new ArrayList<String>();
-	List<String> metrics=new ArrayList<String>();
-	
-	
+	List<String> metrics = new ArrayList<String>();
+
 	@Override
 	protected void onUpdateData(int arg0)
 	{
 		// Check if user has changed the account, in that case, retrieve the new
 		// credential object
 
-		if (credential == null
-				|| credential.getSelectedAccountName() == null
-				|| !credential.getSelectedAccountName().equals(appPreferences.getUserName()))
+		if (credential.getSelectedAccountName() == null	|| !credential.getSelectedAccountName().equals(appPreferences.getUserName()))
 		{
 			Log.d(App.TAG_ADSENSE, "Account changed, retrieving new cred object");
 
-			try
-			{
-				credential = GoogleAccountCredential.usingOAuth2(this, scopes);
-				credential.setSelectedAccountName(appPreferences.getUserName());
-				adsense_service = initializeAdsense(credential);
-			}
-			catch (Exception e)
-			{
-
-				Log.e(App.TAG_ADSENSE, "Exception in onInitialize"
-						+ e.getMessage());
-			}
+			InitAuth();
 		}
 
 		AccountId = appPreferences.getMetadata(Keys.ACCOUNT_ID);
@@ -71,35 +57,32 @@ public class DashAdsense extends DashClockExtension
 		Log.d(App.TAG_ADSENSE, periodKey);
 		isLocaltime = appPreferences.isLocalTime();
 		showCurrency = appPreferences.isShowcurrency();
-		
-		
+
 		metrics.clear();
-		
+
 		metrics.add(APIMetrics.EARNINGS.toString());
-		
-		if(appPreferences.getboolMetaData(Keys.SHOW_CLICKS))
+
+		if (appPreferences.getboolMetaData(Keys.SHOW_CLICKS))
 		{
 			metrics.add(APIMetrics.CLICKS.toString());
 		}
-		if(appPreferences.getboolMetaData(Keys.SHOW_PAGE_VIEWS))
+		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_VIEWS))
 		{
 			metrics.add(APIMetrics.PAGE_VIEWS.toString());
 		}
-		
-		if(appPreferences.getboolMetaData(Keys.SHOW_PAGE_CTR))
+
+		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_CTR))
 		{
 			metrics.add(APIMetrics.PAGE_VIEWS_CTR.toString());
 		}
-		if(appPreferences.getboolMetaData(Keys.SHOW_PAGE_RPM))
+		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_RPM))
 		{
 			metrics.add(APIMetrics.PAGE_VIEWS_RPM.toString());
 		}
-		if(appPreferences.getboolMetaData(Keys.SHOW_CPC))
+		if (appPreferences.getboolMetaData(Keys.SHOW_CPC))
 		{
 			metrics.add(APIMetrics.COST_PER_CLICK.toString());
 		}
-
-
 
 		if (TextUtils.isEmpty(AccountId))
 		{
@@ -124,6 +107,27 @@ public class DashAdsense extends DashClockExtension
 		super.onInitialize(isReconnect);
 		appPreferences = new AdSensePreferences(this);
 		scopes.add(AdSenseScopes.ADSENSE_READONLY);
+		
+		InitAuth();
+			
+	}
+	
+	
+	private void InitAuth()
+	{
+		
+		try
+		{
+			credential = GoogleAccountCredential.usingOAuth2(this, scopes);
+			credential.setSelectedAccountName(appPreferences.getUserName());
+			adsense_service = initializeAdsense(credential);
+		}
+		catch (Exception e)
+		{
+
+			Log.e(App.TAG_ADSENSE, "Exception in onInitialize"
+					+ e.getMessage());
+		}
 
 	}
 
@@ -145,7 +149,7 @@ public class DashAdsense extends DashClockExtension
 			try
 			{
 
-				result = GenerateReport.run(adsense_service, periodKey, isLocaltime , (ArrayList<String>) metrics);
+				result = GenerateReport.run(adsense_service, periodKey, isLocaltime, (ArrayList<String>) metrics);
 			}
 			catch (Exception e)
 			{
@@ -160,9 +164,9 @@ public class DashAdsense extends DashClockExtension
 		@Override
 		protected void onPostExecute(APIResult resultAPI)
 		{
-			HashMap<String, DisplayAttribute> values=new HashMap<String, DisplayAttribute>();
+			HashMap<String, DisplayAttribute> values = new HashMap<String, DisplayAttribute>();
 			String currency = null;
-			
+
 			// Do not do anything if there is a failure, could be network
 			// condition.
 			if (resultAPI.getStatus() == API_STATUS.FAILURE)
@@ -171,74 +175,92 @@ public class DashAdsense extends DashClockExtension
 			AdsenseReportsGenerateResponse response = ((AdSenseAPIResult) resultAPI).getResult();
 
 			ArrayList<Headers> headers = (ArrayList<Headers>) response.getHeaders();
+
 			
-			if (response.getRows() != null && !response.getRows().isEmpty())
+			// response.getTotalMatchedRows()
+			
+			if (response.getRows() != null)
 			{
-				for (List<String> row : response.getRows())
+				if (!response.getRows().isEmpty())
 				{
-					if (App.LOCAL_LOGV)
-						Log.v(App.TAG_ADSENSE, String.valueOf(row.size()));
-
-					for(int i=0;i<headers.size();++i)
+					for (List<String> row : response.getRows())
 					{
-						if(headers.get(i).getCurrency()!=null)
-						{
-							currency=headers.get(i).getCurrency();
-							values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.CURRENCY));
-						}
-						else if(headers.get(i).getName().equals(APIMetrics.PAGE_VIEWS_CTR.toString()))
-						{
-							values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.PERCENTAGE));
-						}
-						else
-						{
-							values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.NUMBER));
-						}
-					}
-					
-					// break after first iteration
-					break;
 
+						for (int i = 0; i < headers.size(); ++i)
+						{
+							if (headers.get(i).getCurrency() != null)
+							{
+								currency = headers.get(i).getCurrency();
+								values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.CURRENCY));
+							}
+							else if (headers.get(i).getName().equals(APIMetrics.PAGE_VIEWS_CTR.toString()))
+							{
+								values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.PERCENTAGE));
+							}
+							else
+							{
+								values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.NUMBER));
+							}
+						}
+
+						// break after first iteration
+						break;
+
+					}
+				}
+				else
+				{
+					Log.d(App.TAG_ADSENSE, "No rows returned");
+
+					// If no rows are returned, either do not publish update or
+					// publish null update to clear existing data
+					return;
 				}
 
 			}
 			else
 			{
-				Log.d(App.TAG_ADSENSE, "No rows returned");
+				Log.d(App.TAG_ADSENSE, "rows are null");
+				// TODO: See if its ok to publish all metrics as zero
+				publishUpdate(null);
+				// If no rows are returned, either do not publish update or
+				// publish null update to clear existing data
+				return;
 			}
 
 			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAdsense.this.getPackageName());
 
 			String expandedTitle, status;
-			StringBuilder expandedBody=new StringBuilder();
-			
-			Set<String> heads=values.keySet();
-			for(String header: heads)
+			StringBuilder expandedBody = new StringBuilder();
+
+			Set<String> heads = values.keySet();
+			for (String header : heads)
 			{
 				String lineString;
-				
-				if(header.equalsIgnoreCase(APIMetrics.EARNINGS.toString()))
+
+				if (header.equalsIgnoreCase(APIMetrics.EARNINGS.toString()))
 					continue;
-				
+
 				int stringIdentifier = getResources().getIdentifier(header, "string", DashAdsense.this.getPackageName());
-				DisplayAttribute dispValue=values.get(header);
-				if(dispValue.getType()==ATTRIBUTE_TYPE.CURRENCY && showCurrency)
-					lineString=String.format(getString(R.string.adsense_attribute_display_format_withcurrency), getString(stringIdentifier), Currency.getInstance(currency).getSymbol(), values.get(header));
+				DisplayAttribute dispValue = values.get(header);
+				if (dispValue.getType() == ATTRIBUTE_TYPE.CURRENCY
+						&& showCurrency)
+					lineString = String.format(getString(R.string.adsense_attribute_display_format_withcurrency), getString(stringIdentifier), Currency.getInstance(currency).getSymbol(), values.get(header));
 				else
-					lineString=String.format(getString(R.string.adsense_attribute_display_format), getString(stringIdentifier),  values.get(header));
-				
+					lineString = String.format(getString(R.string.adsense_attribute_display_format), getString(stringIdentifier), values.get(header));
+
 				expandedBody.append(lineString);
 				expandedBody.append("\n");
 			}
 
-			if (showCurrency && currency!=null)
+			if (showCurrency && currency != null)
 			{
-				status=String.format(getString(R.string.adsense_status_display_format_withcurrency),Currency.getInstance(currency).getSymbol(), values.get(APIMetrics.EARNINGS.toString()) );
+				status = String.format(getString(R.string.adsense_status_display_format_withcurrency), Currency.getInstance(currency).getSymbol(), values.get(APIMetrics.EARNINGS.toString()));
 				expandedTitle = String.format(getString(R.string.adsense_title_display_format_withcurrency), getString(periodIdentifier), Currency.getInstance(currency).getSymbol(), values.get(APIMetrics.EARNINGS.toString()));
 			}
 			else
 			{
-				status=values.get(APIMetrics.EARNINGS.toString()).getFormattedValue();
+				status = values.get(APIMetrics.EARNINGS.toString()).getFormattedValue();
 				expandedTitle = String.format(getString(R.string.adsense_title_display_format), getString(periodIdentifier), values.get(APIMetrics.EARNINGS.toString()));
 			}
 

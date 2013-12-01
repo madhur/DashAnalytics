@@ -40,23 +40,13 @@ public class DashAnalytics extends DashClockExtension
 	{
 		// Check if user has changed the account, in that case, retrieve the new
 		// credential object
-		
 
-		if (credential == null || credential.getSelectedAccountName()==null|| !credential.getSelectedAccountName().equals(appPreferences.getUserName()))
+		if (credential.getSelectedAccountName() == null
+				|| !credential.getSelectedAccountName().equals(appPreferences.getUserName()))
 		{
 			Log.d(App.TAG, "Account changed, retrieving new cred object");
 
-			try
-			{
-				credential = GoogleAccountCredential.usingOAuth2(this, scopes);
-				credential.setSelectedAccountName(appPreferences.getUserName());
-				analytics_service = getAnalyticsService(credential);
-			}
-			catch (Exception e)
-			{
-
-				Log.e(App.TAG, "Exception in onInitialize" + e.getMessage());
-			}
+			InitAuth();
 		}
 
 		ProfileId = appPreferences.getMetadata(Keys.PROFILE_ID);
@@ -71,10 +61,10 @@ public class DashAnalytics extends DashClockExtension
 
 		if (Connection.isConnected(this))
 		{
-			if(App.LOCAL_LOGV)
+			if (App.LOCAL_LOGV)
 				Log.v(App.TAG, "Firing update:" + String.valueOf(arg0));
-			
-			new APIResultTask().execute(ProfileId, metricKey, periodKey);
+
+			new APIResultTask().execute();
 		}
 		else
 			Log.d(App.TAG, "No network, postponing update");
@@ -87,7 +77,25 @@ public class DashAnalytics extends DashClockExtension
 		appPreferences = new AnalyticsPreferences(this);
 
 		scopes.add(AnalyticsScopes.ANALYTICS_READONLY);
+		
+		InitAuth();
 
+	}
+	
+	private void InitAuth()
+	{
+		try
+		{
+			credential = GoogleAccountCredential.usingOAuth2(this, scopes);
+			credential.setSelectedAccountName(appPreferences.getUserName());
+			analytics_service = getAnalyticsService(credential);
+		}
+		catch (Exception e)
+		{
+
+			Log.e(App.TAG, "Exception in onInitialize" + e.getMessage());
+		}
+		
 	}
 
 	private Analytics getAnalyticsService(GoogleAccountCredential credential)
@@ -105,14 +113,15 @@ public class DashAnalytics extends DashClockExtension
 			try
 			{
 				Get apiQuery = analytics_service.data().ga().get("ga:"
-						+ params[0], params[2], params[2], "ga:" + params[1]);
+						+ ProfileId, periodKey, periodKey, "ga:" + metricKey);
 				Log.d(App.TAG, apiQuery.toString());
-				
+
 				return new AnalyticsAPIResult(apiQuery.execute());
 			}
-			catch(UnknownHostException e)
+			catch (UnknownHostException e)
 			{
-				Log.e(App.TAG, "Exception unknownhost in doInBackground" + e.getMessage());
+				Log.e(App.TAG, "Exception unknownhost in doInBackground"
+						+ e.getMessage());
 				return new APIResult(e.getMessage());
 			}
 			catch (Exception e)
@@ -125,12 +134,13 @@ public class DashAnalytics extends DashClockExtension
 		@Override
 		protected void onPostExecute(APIResult resultAPI)
 		{
-			// Do not do anything if there is a failure, could be network condition.
-			if(resultAPI.getStatus()==API_STATUS.FAILURE)
+			// Do not do anything if there is a failure, could be network
+			// condition.
+			if (resultAPI.getStatus() == API_STATUS.FAILURE)
 				return;
-			
-			GaData results= ((AnalyticsAPIResult)resultAPI).getResult();
-			
+
+			GaData results = ((AnalyticsAPIResult) resultAPI).getResult();
+
 			String profileName = appPreferences.getMetadata(Keys.PROFILE_NAME);
 			String selectedProperty = appPreferences.getMetadata(Keys.PROPERTY_NAME);
 			String metricKey = appPreferences.getMetadata(Keys.METRIC_ID);
@@ -138,32 +148,44 @@ public class DashAnalytics extends DashClockExtension
 			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAnalytics.this.getPackageName());
 			String result;
 
-			if(App.LOCAL_LOGV)
+			if (App.LOCAL_LOGV)
 				Log.v(App.TAG, "Processing result for " + profileName);
 
-			if (results != null && results.getRows() != null)
+			if (results != null)
 			{
-
-				if (!results.getRows().isEmpty())
+				if (results.getRows() != null)
 				{
-
-					result = results.getRows().get(0).get(0);
-
-					try
+					if (!results.getRows().isEmpty())
 					{
-						Double numResult = Double.parseDouble(result);
-						
-						result=fmt(numResult);
+
+						result = results.getRows().get(0).get(0);
+
+						try
+						{
+							Double numResult = Double.parseDouble(result);
+
+							result = fmt(numResult);
+						}
+						catch (NumberFormatException e)
+						{
+							Log.e(App.TAG, e.getMessage());
+						}
 					}
-					catch (NumberFormatException e)
+					else
 					{
+						result = "0";
+						Log.d(App.TAG, "empty result");
 
+						// TODO: Check if its ok to publish zero metric
+						
 					}
 				}
 				else
 				{
 					result = "0";
-					Log.d(App.TAG, "empty result");
+					Log.d(App.TAG, "null rows");
+
+					// TODO: Check if its ok to publish zero metric
 
 				}
 			}
@@ -171,6 +193,7 @@ public class DashAnalytics extends DashClockExtension
 			{
 				result = "-1";
 				Log.d(App.TAG, "null result");
+				// TODO: Check if its ok to publish zero metric
 				publishUpdate(null);
 				return;
 			}
@@ -188,17 +211,15 @@ public class DashAnalytics extends DashClockExtension
 		}
 
 	}
-	
-	
+
 	private static String fmt(double d)
 	{
-	    if(d == (int) d)
-	        return String.format("%d",(int)d);
-	    else
-	    {
-	    	return new DecimalFormat("#.##").format(d);
-	    }
+		if (d == (int) d)
+			return String.format("%d", (int) d);
+		else
+		{
+			return new DecimalFormat("#.##").format(d);
+		}
 	}
 
-	
 }

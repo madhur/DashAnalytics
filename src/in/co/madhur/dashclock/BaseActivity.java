@@ -102,14 +102,20 @@ public abstract class BaseActivity extends Activity
 		if (acProfiles == null)
 		{
 			if (App.LOCAL_LOGV)
-				Log.v(App.TAG, "Initing accounts from net for "
+				Log.v(App.TAB_BASE, "Initing accounts from net for "
 						+ selectedAccount);
-			mService.showAccountsAsync();
+			
+			if (Connection.isConnected(this))
+			{
+				mService.showAccountsAsync();
+			}
+			else
+				Toast.makeText(this, getString(R.string.network_not_connected), Toast.LENGTH_SHORT).show();
 		}
 		else
 		{
 			if (App.LOCAL_LOGV)
-				Log.v(App.TAG, "Initing accounts from cache for "
+				Log.v(App.TAB_BASE, "Initing accounts from cache for "
 						+ selectedAccount);
 
 			new UpdateUIClass().UpdateUI(new AccountResult(acProfiles, false));
@@ -130,7 +136,7 @@ public abstract class BaseActivity extends Activity
 		int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
 		if (status != ConnectionResult.SUCCESS)
 		{
-			Log.e(App.TAG, String.valueOf(status));
+			Log.e(App.TAB_BASE, String.valueOf(status));
 			Toast.makeText(this, getString(R.string.gps_missing), Toast.LENGTH_LONG).show();
 			finish();
 			return;
@@ -207,7 +213,7 @@ public abstract class BaseActivity extends Activity
 			if (index != -1)
 				getActionBar().setSelectedNavigationItem(index);
 			else
-				Log.e(App.TAG, "acount not found");
+				Log.e(App.TAB_BASE, "acount not found");
 		}
 
 		getActionBar().setListNavigationCallbacks(adapter, new OnNavigationListener()
@@ -227,7 +233,7 @@ public abstract class BaseActivity extends Activity
 				if (getAccountsList().size() >= itemPosition)
 				{
 					if (App.LOCAL_LOGV)
-						Log.v(App.TAG, "Fetching accounts for:"
+						Log.v(App.TAB_BASE, "Fetching accounts for:"
 								+ getAccountsList().get(itemPosition));
 
 					credential.setSelectedAccountName(getAccountsList().get(itemPosition));
@@ -351,12 +357,12 @@ public abstract class BaseActivity extends Activity
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	@Subscribe
-	public void Notify(Intent reason)
-	{
-
-		startActivityForResult(reason, REQUEST_AUTHORIZATION);
-	}
+//	@Subscribe
+//	public void Notify(Intent reason)
+//	{
+//
+//		startActivityForResult(reason, REQUEST_AUTHORIZATION);
+//	}
 
 	protected void getAccounts()
 	{
@@ -428,7 +434,7 @@ public abstract class BaseActivity extends Activity
 						if (result.isPersist() && acProfiles.size() > 0)
 						{
 							if (App.LOCAL_LOGV)
-								Log.v(App.TAG, "saving configdata");
+								Log.v(App.TAB_BASE, "saving configdata");
 
 							try
 							{
