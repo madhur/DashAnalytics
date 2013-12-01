@@ -22,7 +22,7 @@ public class App extends Application
 
 		bus = new Bus(ThreadEnforcer.ANY);
 		
-		// Crittercism.initialize(getApplicationContext(), "527b160b8b2e3376d3000003");
+		Crittercism.initialize(getApplicationContext(), "527b160b8b2e3376d3000003");
 	}
 
 	public static Bus getEventBus()

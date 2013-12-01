@@ -1,7 +1,5 @@
 package in.co.madhur.dashclock.API;
 
-import com.google.api.services.analytics.model.GaData;
-
 import in.co.madhur.dashclock.Consts.API_STATUS;
 
 public  class APIResult

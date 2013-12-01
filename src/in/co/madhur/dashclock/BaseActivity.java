@@ -5,7 +5,6 @@ import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.DataService.LocalBinder;
 import in.co.madhur.dashclock.dashadsense.AdsenseDataService;
 import in.co.madhur.dashclock.dashanalytics.AnalyticsDataService;
-import in.co.madhur.dashclock.dashanalytics.DashAnalyticsPreferenceActivity;
 import java.io.IOException;
 import java.util.ArrayList;
 import com.fasterxml.jackson.core.JsonParseException;
