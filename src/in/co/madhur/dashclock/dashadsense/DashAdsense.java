@@ -2,15 +2,19 @@ package in.co.madhur.dashclock.dashadsense;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import in.co.madhur.dashclock.App;
 import in.co.madhur.dashclock.AppPreferences;
 import in.co.madhur.dashclock.Connection;
+import in.co.madhur.dashclock.Consts.APIMetrics;
 import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.APIResult;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import in.co.madhur.dashclock.Consts.API_STATUS;
+import in.co.madhur.dashclock.dashanalytics.DashAnalytics;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,7 +37,9 @@ public class DashAdsense extends DashClockExtension
 	private AdSense adsense_service;
 	boolean isLocaltime, showCurrency;
 	List<String> scopes = new ArrayList<String>();
-
+	List<String> metrics=new ArrayList<String>();
+	
+	
 	@Override
 	protected void onUpdateData(int arg0)
 	{
@@ -65,6 +71,42 @@ public class DashAdsense extends DashClockExtension
 		Log.d(App.TAG_ADSENSE, periodKey);
 		isLocaltime = appPreferences.isLocalTime();
 		showCurrency = appPreferences.isShowcurrency();
+		
+		
+		metrics.clear();
+	//	values.clear();
+		
+		metrics.add(APIMetrics.EARNINGS.toString());
+//		values.put(APIMetrics.EARNINGS.toString(), null);
+		
+		if(appPreferences.getboolMetaData(Keys.SHOW_CLICKS))
+		{
+			metrics.add(APIMetrics.CLICKS.toString());
+	//		values.put(APIMetrics.CLICKS.toString(), null);
+		}
+		if(appPreferences.getboolMetaData(Keys.SHOW_PAGE_VIEWS))
+		{
+			metrics.add(APIMetrics.PAGE_VIEWS.toString());
+	//		values.put(APIMetrics.PAGE_VIEWS.toString(), null);
+		}
+		
+		if(appPreferences.getboolMetaData(Keys.SHOW_PAGE_CTR))
+		{
+			metrics.add(APIMetrics.PAGE_VIEWS_CTR.toString());
+	//		values.put(APIMetrics.PAGE_VIEWS_CTR.toString(), null);
+		}
+		if(appPreferences.getboolMetaData(Keys.SHOW_PAGE_RPM))
+		{
+			metrics.add(APIMetrics.PAGE_VIEWS_RPM.toString());
+	//		values.put(APIMetrics.PAGE_VIEWS_RPM.toString(), null);	
+		}
+		if(appPreferences.getboolMetaData(Keys.SHOW_CPC))
+		{
+			metrics.add(APIMetrics.COST_PER_CLICK.toString());
+	//		values.put(APIMetrics.COST_PER_CLICK.toString(), null);	
+		}
+
+
 
 		if (TextUtils.isEmpty(AccountId))
 		{
@@ -77,7 +119,7 @@ public class DashAdsense extends DashClockExtension
 			if (App.LOCAL_LOGV)
 				Log.v(App.TAG_ADSENSE, "Firing update:" + String.valueOf(arg0));
 
-			new APIResultTask().execute(AccountId, periodKey, String.valueOf(isLocaltime));
+			new APIResultTask().execute();
 		}
 		else
 			Log.d(App.TAG_ADSENSE, "No network, postponing update");
@@ -110,7 +152,7 @@ public class DashAdsense extends DashClockExtension
 			try
 			{
 
-				result = GenerateReport.run(adsense_service, params[1], params[2]);
+				result = GenerateReport.run(adsense_service, periodKey, isLocaltime , (ArrayList<String>) metrics);
 			}
 			catch (Exception e)
 			{
@@ -125,8 +167,10 @@ public class DashAdsense extends DashClockExtension
 		@Override
 		protected void onPostExecute(APIResult resultAPI)
 		{
-			StringBuilder sb = new StringBuilder();
-
+			HashMap<String, String> values=new HashMap<String, String>();
+//			StringBuilder sb = new StringBuilder();
+			String currency = null;
+			
 			// Do not do anything if there is a failure, could be network
 			// condition.
 			if (resultAPI.getStatus() == API_STATUS.FAILURE)
@@ -143,12 +187,23 @@ public class DashAdsense extends DashClockExtension
 					if (App.LOCAL_LOGV)
 						Log.v(App.TAG_ADSENSE, String.valueOf(row.size()));
 
-					for (String column : row)
+					for(int i=0;i<headers.size();++i)
 					{
-						if (App.LOCAL_LOGV)
-							Log.v(App.TAG_ADSENSE, "adding value" + column);
-						sb.append(column);
+						if(headers.get(i).getCurrency()!=null)
+							currency=headers.get(i).getCurrency();
+						
+						values.put(headers.get(i).getName(), row.get(i));
 					}
+					
+					// break after first iteration
+					break;
+//					response.getRows().get(0).get(location)
+//					for (String column : row)
+//					{
+//						if (App.LOCAL_LOGV)
+//							Log.v(App.TAG_ADSENSE, "adding value" + column);
+//						sb.append(column);
+//					}
 				}
 
 			}
@@ -157,40 +212,52 @@ public class DashAdsense extends DashClockExtension
 				Log.d(App.TAG_ADSENSE, "No rows returned");
 			}
 
-			String currency = null;
+			
 
-			if (showCurrency)
-			{
-				for (Headers header : headers)
-				{
-					currency = header.getCurrency();
-					Log.d(App.TAG_ADSENSE, "Currency: " + currency);
+//				for (Headers header : headers)
+//				{
+//					Log.d(App.TAG_ADSENSE, header.getName());
+//					
+//					
+//					Log.d(App.TAG_ADSENSE, "Currency: " + currency);
+//
+//				}
 
-				}
-			}
-
-			if (TextUtils.isEmpty(sb.toString()))
-				return;
+//			if (TextUtils.isEmpty(sb.toString()))
+//				return;
 
 			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAdsense.this.getPackageName());
 
 			String expandedTitle, status;
-
-			if (showCurrency)
+			StringBuilder expandedBody=new StringBuilder();
+			
+			Set<String> heads=values.keySet();
+			for(String header: heads)
 			{
-				status=String.format(getString(R.string.adsense_status_display_format_withcurrency),Currency.getInstance(currency).getSymbol(), sb.toString() );
-				expandedTitle = String.format(getString(R.string.adsense_title_display_format_withcurrency), getString(periodIdentifier), Currency.getInstance(currency).getSymbol(), sb.toString());
+				if(header.equalsIgnoreCase(APIMetrics.EARNINGS.toString()))
+					continue;
+				
+				int stringIdentifier = getResources().getIdentifier(header, "string", DashAdsense.this.getPackageName());
+				String lineString=String.format(getString(R.string.adsense_attribute_display_format), getString(stringIdentifier), values.get(header));
+				expandedBody.append(lineString);
+				expandedBody.append("\n");
+			}
+
+			if (showCurrency && currency!=null)
+			{
+				status=String.format(getString(R.string.adsense_status_display_format_withcurrency),Currency.getInstance(currency).getSymbol(), values.get(APIMetrics.EARNINGS.toString()) );
+				expandedTitle = String.format(getString(R.string.adsense_title_display_format_withcurrency), getString(periodIdentifier), Currency.getInstance(currency).getSymbol(), values.get(APIMetrics.EARNINGS.toString()));
 			}
 			else
 			{
-				status=sb.toString();
-				expandedTitle = String.format(getString(R.string.adsense_title_display_format), getString(periodIdentifier), sb.toString());
+				status=values.get(APIMetrics.EARNINGS.toString());
+				expandedTitle = String.format(getString(R.string.adsense_title_display_format), getString(periodIdentifier), values.get(APIMetrics.EARNINGS.toString()));
 			}
 
 			try
 			{
 
-				publishUpdate(new ExtensionData().visible(true).status(status).icon(R.drawable.ic_dashadsense).expandedTitle(expandedTitle));
+				publishUpdate(new ExtensionData().visible(true).status(status).icon(R.drawable.ic_dashadsense).expandedTitle(expandedTitle).expandedBody(expandedBody.toString()));
 
 			}
 			catch (Exception e)

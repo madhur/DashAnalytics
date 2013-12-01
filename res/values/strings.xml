@@ -38,6 +38,7 @@
     <string name="extension_description">Display Google Analytics metric on Dashclock widget</string>
     <string name="title_display_format" formatted="false">%s %s: %s</string>
     <string name="adsense_title_display_format" formatted="false">Earnings %s: %s</string>
+    <string name="adsense_attribute_display_format" formatted="false">%s: %s</string>
     <string name="adsense_title_display_format_withcurrency" formatted="false">Earnings %s: %s %s</string>
     <string name="adsense_status_display_format_withcurrency" formatted="false">%s %s</string>
     <string name="body_display_format" formatted="false">%s (%s)</string>

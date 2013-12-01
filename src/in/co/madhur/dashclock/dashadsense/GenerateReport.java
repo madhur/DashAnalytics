@@ -5,9 +5,12 @@ import in.co.madhur.dashclock.Consts.APIPeriod;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import android.util.Log;
 
@@ -29,14 +32,13 @@ public class GenerateReport
 	 *            the ad client ID on which to run the report.
 	 * @throws Exception
 	 */
-	public static AdsenseReportsGenerateResponse run(AdSense adsense, String period, String isLocal) throws Exception
+	public static AdsenseReportsGenerateResponse run(AdSense adsense, String period, boolean isLocalTime, ArrayList<String> metrics) throws Exception
 	{
 
 		// Prepare report.
 		Date today = new Date();
 		Calendar calendar = Calendar.getInstance();
 		String startDate = null, endDate = null;
-		boolean isLocalTime=Boolean.parseBoolean(isLocal);
 		
 		if(period.equalsIgnoreCase(APIPeriod.TODAY.toString()))
 		{
@@ -80,14 +82,13 @@ public class GenerateReport
 		
 		Generate request = adsense.reports().generate(startDate, endDate);
 		
-		Log.d(App.TAG_ADSENSE, "Currency: " + request.getCurrency());
-
 		if(isLocalTime)
 			request.setUseTimezoneReporting(true);
 		else
 			request.setUseTimezoneReporting(false);
 		
-		request.setMetric(Arrays.asList("EARNINGS"));
+		//ArrayList<String> metricValues=new ArrayList<String>(metrics);
+		request.setMetric(metrics);
 
 		// Run report.
 		AdsenseReportsGenerateResponse response = request.execute();

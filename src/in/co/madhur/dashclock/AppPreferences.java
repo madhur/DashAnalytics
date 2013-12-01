@@ -37,6 +37,11 @@ public abstract class AppPreferences
 		ADSENSE_PERIOD_ID("adsense_period_id"),
 		USE_LOCAL_TIME("pref_adsense_usetimezonee"),
 		SHOW_CURRENCY("pref_showcurrency"),
+		SHOW_PAGE_VIEWS("pref_showpageviews"),
+		SHOW_CLICKS("pref_showclicks"),
+		SHOW_PAGE_CTR("pref_showpagectr"),
+		SHOW_PAGE_RPM("pref_showpagerpm"),
+		SHOW_CPC("pref_showcpc"),
 		AUTH_TOKEN("pref_auth_token");
 
 		public final String key;
@@ -101,6 +106,13 @@ public abstract class AppPreferences
 
 	}
 	
+	public boolean getboolMetaData(Keys key)
+	{
+		boolean defValue=false;
+		
+		return sharedPreferences.getBoolean(key.key, defValue);
+	}
+	
 	public boolean isLocalTime()
 	{
 		return sharedPreferences.getBoolean(Keys.USE_LOCAL_TIME.key, true);
@@ -111,6 +123,8 @@ public abstract class AppPreferences
 		return sharedPreferences.getBoolean(Keys.SHOW_CURRENCY.key, true);
 		
 	}
+	
+	
 
 	public void setMetadata(Keys key, String value)
 	{

@@ -38,7 +38,13 @@ public class Consts
 		VISITS("visits"),
 		VISITORS("visitors"),
 		NEW_VISITS("newVisits"),
-		VISIT_COUNT("visitCount");
+		VISIT_COUNT("visitCount"),
+		EARNINGS("EARNINGS"),
+		PAGE_VIEWS("PAGE_VIEWS"),
+		CLICKS("CLICKS"),
+		PAGE_VIEWS_CTR("PAGE_VIEWS_CTR"),
+		PAGE_VIEWS_RPM("PAGE_VIEWS_RPM"),
+		COST_PER_CLICK("COST_PER_CLICK");
 
 		private String key;
 
