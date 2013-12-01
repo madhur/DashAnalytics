@@ -1,6 +1,7 @@
 package in.co.madhur.dashclock.dashadsense;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 import in.co.madhur.dashclock.App;
@@ -22,6 +23,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.adsense.AdSense;
 import com.google.api.services.adsense.AdSenseScopes;
 import com.google.api.services.adsense.model.AdsenseReportsGenerateResponse;
+import com.google.api.services.adsense.model.AdsenseReportsGenerateResponse.Headers;
 
 public class DashAdsense extends DashClockExtension
 {
@@ -29,7 +31,7 @@ public class DashAdsense extends DashClockExtension
 	String AccountId, metricKey, periodKey;
 	private GoogleAccountCredential credential;
 	private AdSense adsense_service;
-	boolean isLocaltime;
+	boolean isLocaltime, showCurrency;
 	List<String> scopes = new ArrayList<String>();
 
 	@Override
@@ -53,13 +55,16 @@ public class DashAdsense extends DashClockExtension
 			catch (Exception e)
 			{
 
-				Log.e(App.TAG_ADSENSE, "Exception in onInitialize" + e.getMessage());
+				Log.e(App.TAG_ADSENSE, "Exception in onInitialize"
+						+ e.getMessage());
 			}
 		}
 
 		AccountId = appPreferences.getMetadata(Keys.ACCOUNT_ID);
-		periodKey = appPreferences.getMetadata(Keys.PERIOD_ID);
-		isLocaltime=appPreferences.isLocalTime();
+		periodKey = appPreferences.getMetadata(Keys.ADSENSE_PERIOD_ID);
+		Log.d(App.TAG_ADSENSE, periodKey);
+		isLocaltime = appPreferences.isLocalTime();
+		showCurrency = appPreferences.isShowcurrency();
 
 		if (TextUtils.isEmpty(AccountId))
 		{
@@ -72,7 +77,7 @@ public class DashAdsense extends DashClockExtension
 			if (App.LOCAL_LOGV)
 				Log.v(App.TAG_ADSENSE, "Firing update:" + String.valueOf(arg0));
 
-			 new APIResultTask().execute(AccountId, periodKey, String.valueOf(isLocaltime));
+			new APIResultTask().execute(AccountId, periodKey, String.valueOf(isLocaltime));
 		}
 		else
 			Log.d(App.TAG_ADSENSE, "No network, postponing update");
@@ -82,7 +87,7 @@ public class DashAdsense extends DashClockExtension
 	protected void onInitialize(boolean isReconnect)
 	{
 		super.onInitialize(isReconnect);
-		appPreferences=new AdSensePreferences(this);
+		appPreferences = new AdSensePreferences(this);
 		scopes.add(AdSenseScopes.ADSENSE_READONLY);
 
 	}
@@ -104,6 +109,7 @@ public class DashAdsense extends DashClockExtension
 			AdsenseReportsGenerateResponse result = null;
 			try
 			{
+
 				result = GenerateReport.run(adsense_service, params[1], params[2]);
 			}
 			catch (Exception e)
@@ -111,34 +117,35 @@ public class DashAdsense extends DashClockExtension
 				Log.e(App.TAG_ADSENSE, e.getMessage());
 				return new APIResult(e.getMessage());
 			}
-			
-			return new AdSenseAPIResult(result); 
-			
-			
+
+			return new AdSenseAPIResult(result);
+
 		}
 
 		@Override
 		protected void onPostExecute(APIResult resultAPI)
 		{
-			StringBuilder sb=new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 
 			// Do not do anything if there is a failure, could be network
 			// condition.
 			if (resultAPI.getStatus() == API_STATUS.FAILURE)
 				return;
-			
-			AdsenseReportsGenerateResponse response= ((AdSenseAPIResult)resultAPI).getResult();
+
+			AdsenseReportsGenerateResponse response = ((AdSenseAPIResult) resultAPI).getResult();
+
+			ArrayList<Headers> headers = (ArrayList<Headers>) response.getHeaders();
 			
 			if (response.getRows() != null && !response.getRows().isEmpty())
 			{
 				for (List<String> row : response.getRows())
 				{
-					if(App.LOCAL_LOGV)
+					if (App.LOCAL_LOGV)
 						Log.v(App.TAG_ADSENSE, String.valueOf(row.size()));
-					
+
 					for (String column : row)
 					{
-						if(App.LOCAL_LOGV)
+						if (App.LOCAL_LOGV)
 							Log.v(App.TAG_ADSENSE, "adding value" + column);
 						sb.append(column);
 					}
@@ -147,81 +154,54 @@ public class DashAdsense extends DashClockExtension
 			}
 			else
 			{
-				Log.d(App.TAG_ADSENSE,"No rows returned");
+				Log.d(App.TAG_ADSENSE, "No rows returned");
 			}
-			
-			if(TextUtils.isEmpty(sb.toString()))
+
+			String currency = null;
+
+			if (showCurrency)
+			{
+				for (Headers header : headers)
+				{
+					currency = header.getCurrency();
+					Log.d(App.TAG_ADSENSE, "Currency: " + currency);
+
+				}
+			}
+
+			if (TextUtils.isEmpty(sb.toString()))
 				return;
 
-//			GaData results = resultAPI.getResult();
-//
-//			String profileName = appPreferences.getMetadata(Keys.PROFILE_NAME);
-//			String selectedProperty = appPreferences.getMetadata(Keys.PROPERTY_NAME);
-//			String metricKey = appPreferences.getMetadata(Keys.METRIC_ID);
-//			int metricIdentifier = getResources().getIdentifier(metricKey, "string", DashAdsense.this.getPackageName());
 			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAdsense.this.getPackageName());
-//			String result;
-//
-//			if (App.LOCAL_LOGV)
-//				Log.v(App.TAG, "Processing result for " + profileName);
-//
-//			if (results != null && results.getRows() != null)
-//			{
-//
-//				if (!results.getRows().isEmpty())
-//				{
-//
-//					result = results.getRows().get(0).get(0);
-//
-//					try
-//					{
-//						Double numResult = Double.parseDouble(result);
-//
-//						result = fmt(numResult);
-//					}
-//					catch (NumberFormatException e)
-//					{
-//
-//					}
-//				}
-//				else
-//				{
-//					result = "0";
-//					Log.d(App.TAG, "empty result");
-//
-//				}
-//			}
-//			else
-//			{
-//				result = "-1";
-//				Log.d(App.TAG, "null result");
-//				publishUpdate(null);
-//				return;
-//			}
+
+			String expandedTitle, status;
+
+			if (showCurrency)
+			{
+				status=String.format(getString(R.string.adsense_status_display_format_withcurrency),Currency.getInstance(currency).getSymbol(), sb.toString() );
+				expandedTitle = String.format(getString(R.string.adsense_title_display_format_withcurrency), getString(periodIdentifier), Currency.getInstance(currency).getSymbol(), sb.toString());
+			}
+			else
+			{
+				status=sb.toString();
+				expandedTitle = String.format(getString(R.string.adsense_title_display_format), getString(periodIdentifier), sb.toString());
+			}
 
 			try
 			{
-				 publishUpdate(new ExtensionData().visible(true).status(sb.toString()).icon(R.drawable.ic_dashclock).expandedTitle(String.format(getString(R.string.adsense_title_display_format),  getString(periodIdentifier), sb.toString())));
-				 
+
+				publishUpdate(new ExtensionData().visible(true).status(status).icon(R.drawable.ic_dashadsense).expandedTitle(expandedTitle));
+
 			}
 			catch (Exception e)
 			{
 
-				Log.e(App.TAG_ADSENSE, "Exception while published:" + e.getMessage());
+				Log.e(App.TAG_ADSENSE, "Exception while published:"
+						+ e.getMessage());
 			}
 
 		}
 
 	}
-
-//	private static String fmt(double d)
-//	{
-//		if (d == (int) d)
-//			return String.format("%d", (int) d);
-//		else
-//		{
-//			return new DecimalFormat("#.##").format(d);
-//		}
-//	}
 
 }

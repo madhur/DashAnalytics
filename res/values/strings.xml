@@ -38,8 +38,11 @@
     <string name="extension_description">Display Google Analytics metric on Dashclock widget</string>
     <string name="title_display_format" formatted="false">%s %s: %s</string>
     <string name="adsense_title_display_format" formatted="false">Earnings %s: %s</string>
+    <string name="adsense_title_display_format_withcurrency" formatted="false">Earnings %s: %s %s</string>
+    <string name="adsense_status_display_format_withcurrency" formatted="false">%s %s</string>
     <string name="body_display_format" formatted="false">%s (%s)</string>
     <string name="dashanalytics_preferences">DashAnalytics Preferences</string>
+    <string name="dashadsense_preferences">DashAdSense Preferences</string>
     <string name="pref_select_period">Select Period</string>
     <string name="pref_select_period_desc">Select time period to query</string>
     <string name="pref_select_metric">Select Metric</string>
@@ -49,5 +52,22 @@
     <string name="adsense_extension_description">Displays Google Adsense earnings on Dashclock widget</string>
     <string name="pref_adsense_usetimezonee">Use Time zone reporting</string>
     <string name="pref_adsense_usetimezonee_desc">Whether the earnings should be displayed in the AdSense account\'s local timezone. If false default PST timezone will be used</string>
-
+	<string name="pref_showcurrency">Show currency</string>
+	<string name="pref_showcurrency_desc">Show currency</string>
+	<string name="pref_adsense_attributes">Select additional attributes to display</string>
+	
+	<string name="pref_showpageviews">Page Views</string>
+	<string name="pref_showpageviews_desc">The number of page views.</string>
+	
+	<string name="pref_showclicks">Clicks</string>
+	<string name="pref_showclicks_desc">The number of times a user clicked on a standard content ad</string>
+	
+	<string name="pref_showpagectr">Page CTR</string>
+	<string name="pref_showpagectr_desc">The ratio of individual page views that resulted in a click.</string>
+	
+	<string name="pref_showpagerpm">Page RPM</string>
+	<string name="pref_showpagerpm_desc">The revenue per thousand page views. This is calculated by dividing your estimated revenue by the number of page views multiplied by 1000.</string>
+	
+	<string name="pref_showcpc">Page CPC</string>
+	<string name="pref_showcpc_desc">The amount you earn each time a user clicks on your ad. CPC is calculated by dividing the estimated revenue by the number of clicks received.</string>
 </resources>

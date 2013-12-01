@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceCategory android:title="@string/dashanalytics_preferences">
-        <ListPreference android:title="@string/pref_select_period" android:summary="@string/pref_select_period_desc" android:key="period_id" android:entries="@array/pref_adsense_period"  android:entryValues="@array/pref_adsense_period_values" android:defaultValue="today"> </ListPreference>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/dashadsense_preferences" >
+    <PreferenceCategory android:title="@string/dashadsense_preferences">
+        <ListPreference android:title="@string/pref_select_period" android:summary="@string/pref_select_period_desc" android:key="adsense_period_id" android:entries="@array/pref_adsense_period"  android:entryValues="@array/pref_adsense_period_values" android:defaultValue="today"> </ListPreference>
         <!--  <ListPreference android:title="@string/pref_select_metric" android:summary="@string/pref_select_metric_desc" android:key="metric_id" android:entries="@array/pref_metric"  android:entryValues="@array/pref_metric_values" android:defaultValue="visits"></ListPreference>-->
         
-        <CheckBoxPreference android:title="@string/pref_adsense_usetimezonee" android:summary="@string/pref_adsense_usetimezonee_desc" android:key="pref_adsense_usetimezonee" android:defaultValue="true"/> -->
+        <CheckBoxPreference android:title="@string/pref_adsense_usetimezonee" android:summary="@string/pref_adsense_usetimezonee_desc" android:key="pref_adsense_usetimezonee" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="@string/pref_showcurrency" android:summary="@string/pref_showcurrency_desc" android:key="pref_showcurrency" android:defaultValue="true"/>
     </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/pref_adsense_attributes">
+        <CheckBoxPreference android:title="@string/pref_showpageviews" android:summary="@string/pref_showpageviews_desc" android:key="pref_showpageviews" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="@string/pref_showclicks" android:summary="@string/pref_showclicks_desc" android:key="pref_showclicks" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="@string/pref_showpagectr" android:summary="@string/pref_showpagectr_desc" android:key="pref_showpagectr" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="@string/pref_showpagerpm" android:summary="@string/pref_showpagerpm_desc" android:key="pref_showpagerpm" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="@string/pref_showcpc" android:summary="@string/pref_showcpc_desc" android:key="pref_showcpc" android:defaultValue="true"/>
+        
+        </PreferenceCategory>
 
 </PreferenceScreen>

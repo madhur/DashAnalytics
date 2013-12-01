@@ -1,5 +1,6 @@
 package in.co.madhur.dashclock.dashadsense;
 
+import in.co.madhur.dashclock.App;
 import in.co.madhur.dashclock.Consts.APIPeriod;
 
 import java.text.DateFormat;
@@ -7,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+
+import android.util.Log;
+
 import com.google.api.services.adsense.AdSense;
 import com.google.api.services.adsense.AdSense.Reports.Generate;
 import com.google.api.services.adsense.model.AdsenseReportsGenerateResponse;
@@ -34,13 +38,13 @@ public class GenerateReport
 		String startDate = null, endDate = null;
 		boolean isLocalTime=Boolean.parseBoolean(isLocal);
 		
-		if(period==APIPeriod.TODAY.toString())
+		if(period.equalsIgnoreCase(APIPeriod.TODAY.toString()))
 		{
 			// startDate = DATE_FORMATTER.format(today);
 			startDate="today";
 			endDate=startDate;
 		}
-		else if(period == APIPeriod.YESTERDAY.toString())
+		else if(period.equalsIgnoreCase(APIPeriod.YESTERDAY.toString()))
 		{
 			calendar.add(Calendar.DATE, -1);
 			
@@ -48,19 +52,19 @@ public class GenerateReport
 			endDate=startDate;
 			
 		}
-		else if(period==APIPeriod.THISMONTH.toString())
+		else if(period.equalsIgnoreCase(APIPeriod.THISMONTH.toString()))
 		{
 			startDate="startOfMonth";
 			endDate="today";
 			
 		}
-		else if(period==APIPeriod.LASTMONTH.toString())
+		else if(period.equalsIgnoreCase(APIPeriod.LASTMONTH.toString()))
 		{
 			calendar.add(Calendar.MONTH, -1);
 			calendar.set(Calendar.DATE, 1);
 			startDate=DATE_FORMATTER.format(calendar.getTime());
 			
-			calendar.add(Calendar.MONTH, 2);  
+			calendar.add(Calendar.MONTH, 1);  
 	        calendar.set(Calendar.DAY_OF_MONTH, 1);  
 	        calendar.add(Calendar.DATE, -1);
 	        
@@ -68,13 +72,15 @@ public class GenerateReport
 			
 		}
 		
-//		calendar.setTime(today);
-//		calendar.add(Calendar.DATE, -7);
-//		Date oneWeekAgo = calendar.getTime();
-//
-//		String startDate = DATE_FORMATTER.format(oneWeekAgo);
-//		String endDate = DATE_FORMATTER.format(today);
+		if(App.LOCAL_LOGV)
+		{
+			Log.d(App.TAG_ADSENSE, "Start Date: "+ startDate);
+			Log.d(App.TAG_ADSENSE, "End Date: "+ endDate);
+		}
+		
 		Generate request = adsense.reports().generate(startDate, endDate);
+		
+		Log.d(App.TAG_ADSENSE, "Currency: " + request.getCurrency());
 
 		if(isLocalTime)
 			request.setUseTimezoneReporting(true);

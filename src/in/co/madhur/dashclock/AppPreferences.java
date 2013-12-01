@@ -34,7 +34,9 @@ public abstract class AppPreferences
 		PROFILE_NAME("profile_name"),
 		METRIC_ID("metric_id"),
 		PERIOD_ID("period_id"),
+		ADSENSE_PERIOD_ID("adsense_period_id"),
 		USE_LOCAL_TIME("pref_adsense_usetimezonee"),
+		SHOW_CURRENCY("pref_showcurrency"),
 		AUTH_TOKEN("pref_auth_token");
 
 		public final String key;
@@ -103,6 +105,12 @@ public abstract class AppPreferences
 	{
 		return sharedPreferences.getBoolean(Keys.USE_LOCAL_TIME.key, true);
 	}
+	
+	public boolean isShowcurrency()
+	{
+		return sharedPreferences.getBoolean(Keys.SHOW_CURRENCY.key, true);
+		
+	}
 
 	public void setMetadata(Keys key, String value)
 	{
@@ -145,6 +153,8 @@ public abstract class AppPreferences
 			defValue = Defaults.METRIC_ID;
 		else if (key == Keys.PERIOD_ID)
 			defValue = Defaults.PERIOD_ID;
+		else if (key==Keys.ADSENSE_PERIOD_ID)
+			defValue=Defaults.PERIOD_ID;
 
 		return sharedPreferences.getString(key.key, defValue);
 	}
