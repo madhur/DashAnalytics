@@ -79,8 +79,9 @@ public abstract class BaseActivity extends Activity
 	{
 
 		int selectedIndex = getActionBar().getSelectedNavigationIndex();
+		
 		String selectedAccount = getAccountsList().get(selectedIndex);
-
+		
 		try
 		{
 			acProfiles = (ArrayList<GNewProfile>) appPreferences.getConfigData(selectedAccount);
@@ -110,7 +111,9 @@ public abstract class BaseActivity extends Activity
 				mService.showAccountsAsync();
 			}
 			else
-				Toast.makeText(this, getString(R.string.network_not_connected), Toast.LENGTH_SHORT).show();
+			{
+				new UpdateUIClass().UpdateUI(new AccountResult( getString(R.string.network_not_connected)));
+			}
 		}
 		else
 		{
@@ -206,16 +209,7 @@ public abstract class BaseActivity extends Activity
 
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActionBar().getThemedContext(), R.layout.spinner_item, navItems);
 		adapter.setDropDownViewResource(R.layout.spinner_item_dropdown);
-
-		if (accountName != null)
-		{
-			int index = navItems.indexOf(accountName);
-			if (index != -1)
-				getActionBar().setSelectedNavigationItem(index);
-			else
-				Log.e(App.TAB_BASE, "acount not found");
-		}
-
+		
 		getActionBar().setListNavigationCallbacks(adapter, new OnNavigationListener()
 		{
 
@@ -223,7 +217,6 @@ public abstract class BaseActivity extends Activity
 			public boolean onNavigationItemSelected(int itemPosition, long itemId)
 			{
 				String selItem = adapter.getItem(itemPosition);
-
 				if (selItem.equals("Add Account"))
 				{
 					startAddGoogleAccountIntent();
@@ -249,6 +242,15 @@ public abstract class BaseActivity extends Activity
 				return true;
 			}
 		});
+
+		if (accountName != null)
+		{
+			int index = navItems.indexOf(accountName);
+			if (index != -1)
+				getActionBar().setSelectedNavigationItem(index);
+			else
+				Log.e(App.TAB_BASE, "acount not found");
+		}
 
 	}
 
@@ -304,6 +306,10 @@ public abstract class BaseActivity extends Activity
 	{
 		switch (item.getItemId())
 		{
+			case android.R.id.home:
+			    finish();
+			    break;
+			    
 			case R.id.action_refresh:
 				if (!mBound || mService == null)
 				{

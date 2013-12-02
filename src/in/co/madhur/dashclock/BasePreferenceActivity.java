@@ -6,6 +6,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.view.MenuItem;
 
 public abstract class BasePreferenceActivity extends PreferenceActivity
 {
@@ -28,6 +29,18 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 		super.onCreate(savedInstanceState);
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case android.R.id.home:
+				finish();
+				break;
+		}
+		return true;
 	}
 
 	@Override
@@ -57,5 +70,5 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 	}
 
 	protected abstract void SetListeners();
-	
+
 }

@@ -42,7 +42,7 @@
         </activity>
         <activity android:name=".dashanalytics.DashAnalyticsPreferenceActivity" >
         </activity>
-        <activity android:name=".dashadsense.DashAdSensePreferenceActivity" >
+        <activity android:name=".dashadsense.DashAdSensePreferenceActivity" android:logo="@drawable/ic_dashadsense"  >
         </activity>
 
         <service
@@ -80,6 +80,7 @@
             android:name=".dashadsense.DashAdsense"
             android:label="DashAdsense"
             android:icon="@drawable/ic_dashadsense"
+            android:logo="@drawable/ic_dashadsense"
             android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA" >
             <intent-filter>
                 <action android:name="com.google.android.apps.dashclock.Extension" />

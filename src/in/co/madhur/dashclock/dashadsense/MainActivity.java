@@ -75,6 +75,7 @@ public class MainActivity extends BaseActivity
 	@Override
 	protected void UpdateSelectionPreferences()
 	{
+		
 		String accountId = appPreferences.getMetadata(Keys.ACCOUNT_ID);
 
 		if (!TextUtils.isEmpty(accountId))
