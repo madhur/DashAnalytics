@@ -6,6 +6,9 @@
         
         <CheckBoxPreference android:title="@string/pref_adsense_usetimezonee" android:summary="@string/pref_adsense_usetimezonee_desc" android:key="pref_adsense_usetimezonee" android:defaultValue="true"/>
         <CheckBoxPreference android:title="@string/pref_showcurrency" android:summary="@string/pref_showcurrency_desc" android:key="pref_showcurrency" android:defaultValue="true"/>
+         <com.google.android.apps.dashclock.configuration.AppChooserPreference
+        android:key="adsense_click_intent"
+        android:title="@string/click_behave_title" />
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/pref_adsense_attributes">
