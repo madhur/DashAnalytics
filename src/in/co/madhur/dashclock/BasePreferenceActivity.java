@@ -3,16 +3,21 @@ package in.co.madhur.dashclock;
 import com.google.android.apps.dashclock.configuration.AppChooserPreference;
 
 import in.co.madhur.dashclock.AppPreferences;
+import in.co.madhur.dashclock.AppPreferences.Keys;
+import in.co.madhur.dashclock.dashadsense.DashAdSensePreferenceActivity;
+import in.co.madhur.dashclock.dashanalytics.DashAnalyticsPreferenceActivity;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.inputmethodservice.Keyboard.Key;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 public abstract class BasePreferenceActivity extends PreferenceActivity
@@ -78,36 +83,35 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 
 	protected void SetListeners()
 	{
-		String packageName = "dummy.xx.name";
 
-		PackageManager pm = this.getPackageManager();
-
-		Resources r = getResources();
-		ApplicationInfo content = null;
-		try
+		final String intentKey;
+		Keys clickIntentKey;
+		if (this instanceof DashAnalyticsPreferenceActivity)
 		{
-			content = pm.getApplicationInfo(packageName, 0);
+			intentKey = Keys.ANALYTICS_CLICK_INTENT.key;
+			clickIntentKey=Keys.ANALYTICS_CLICK_INTENT;
 		}
-		catch (NameNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		final String appName = pm.getApplicationLabel(content).toString();
 
-		CharSequence intentSummary = AppChooserPreference.getDisplayValue(this, "pref string");
-		getPreferenceScreen().findPreference("click_intent").setSummary(TextUtils.isEmpty(intentSummary)
-				|| intentSummary.equals(r.getString(R.string.pref_shortcut_default)) ? appName
+		else 
+		{
+			intentKey = Keys.ADSENSE_CLICK_INTENT.key;
+			clickIntentKey=Keys.ADSENSE_CLICK_INTENT;
+		}
+
+		CharSequence intentSummary = AppChooserPreference.getDisplayValue(this, appPreferences.getMetadata(clickIntentKey));
+		getPreferenceScreen().findPreference(intentKey).setSummary(TextUtils.isEmpty(intentSummary)
+				|| intentSummary.equals(getString(R.string.pref_shortcut_default)) ? ""
 				: intentSummary);
-		
-		getPreferenceScreen().findPreference("click_intent").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener()
+
+		getPreferenceScreen().findPreference(intentKey).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener()
 		{
 
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
 				CharSequence intentSummary = AppChooserPreference.getDisplayValue(getBaseContext(), newValue.toString());
-				getPreferenceScreen().findPreference("click_intent").setSummary(TextUtils.isEmpty(intentSummary)
-						|| intentSummary.equals(getResources().getString(R.string.pref_shortcut_default)) ? appName
+				getPreferenceScreen().findPreference(intentKey).setSummary(TextUtils.isEmpty(intentSummary)
+						|| intentSummary.equals(getResources().getString(R.string.pref_shortcut_default)) ? ""
 						: intentSummary);
 				return true;
 			}

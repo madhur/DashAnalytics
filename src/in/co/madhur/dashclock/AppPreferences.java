@@ -1,5 +1,6 @@
 package in.co.madhur.dashclock;
 
+import in.co.madhur.dashclock.Consts.ADSENSE_METRICS;
 import in.co.madhur.dashclock.Consts.ANALYTICS_METRICS;
 import in.co.madhur.dashclock.API.GNewProfile;
 
@@ -38,11 +39,8 @@ public abstract class AppPreferences
 		ADSENSE_PERIOD_ID("adsense_period_id"),
 		USE_LOCAL_TIME("pref_adsense_usetimezonee"),
 		SHOW_CURRENCY("pref_showcurrency"),
-		SHOW_PAGE_VIEWS("pref_showpageviews"),
-		SHOW_CLICKS("pref_showclicks"),
-		SHOW_PAGE_CTR("pref_showpagectr"),
-		SHOW_PAGE_RPM("pref_showpagerpm"),
-		SHOW_CPC("pref_showcpc"),
+		ADSENSE_CLICK_INTENT("adsense_click_intent"),
+		ANALYTICS_CLICK_INTENT("analytics_click_intent"),
 		SHOW_PROFILE("pref_analytics_showprofile"),
 		SHOW_ADSENSE_LASTUPDATE("pref_adsense_showlastupdate"),
 		SHOW_ANALYTICS_LASTUPDATE("pref_analytics_showlastupdate"),
@@ -57,6 +55,32 @@ public abstract class AppPreferences
 		}
 
 	};
+	
+	public enum ADSENSE_KEYS
+	{
+		SHOW_PAGE_VIEWS("pref_showpageviews", ADSENSE_METRICS.PAGE_VIEWS),
+		SHOW_CLICKS("pref_showclicks", ADSENSE_METRICS.CLICKS),
+		SHOW_PAGE_CTR("pref_showpagectr", ADSENSE_METRICS.PAGE_VIEWS_CTR),
+		SHOW_PAGE_RPM("pref_showpagerpm" , ADSENSE_METRICS.PAGE_VIEWS_RPM),
+		SHOW_CPC("pref_showcpc", ADSENSE_METRICS.COST_PER_CLICK);
+		
+		public final String key;
+		public final String metric;
+
+		private ADSENSE_KEYS(String key, ADSENSE_METRICS metric)
+		{
+			this.key = key;
+			this.metric=metric.toString();
+
+		}
+		
+		public String getMetric()
+		{
+			
+			return metric;
+		}
+		
+	}
 	
 	public enum ANALYTICS_KEYS 
 	{
@@ -154,6 +178,14 @@ public abstract class AppPreferences
 		
 		return sharedPreferences.getBoolean(key.key, defValue);
 	}
+	
+	public boolean getAdsenseProperty(ADSENSE_KEYS key)
+	{
+		boolean defValue=false;
+		
+		return sharedPreferences.getBoolean(key.key, defValue);
+	}
+	
 	
 	
 	public boolean isLocalTime()

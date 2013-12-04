@@ -1,6 +1,5 @@
 package in.co.madhur.dashclock;
 
-import android.os.Debug;
 import android.util.Log;
 
 public class Consts
@@ -74,7 +73,6 @@ public class Consts
 		
 		public static ANALYTICS_METRICS getByMetric(String metricKey)
 		{
-			Log.d(App.TAG, String.valueOf(ANALYTICS_METRICS.values().length));
 			for(ANALYTICS_METRICS value: ANALYTICS_METRICS.values())
 			{
 				

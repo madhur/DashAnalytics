@@ -43,7 +43,7 @@
     <string name="adsense_title_display_format_withcurrency" formatted="false">Earnings %s: %s %s</string>
     <string name="adsense_status_display_format_withcurrency" formatted="false">%s %s</string>
     <string name="body_display_format" formatted="false">%s (%s)</string>
-    <string name="lastupdate_display_format" formatted="false">Last Updated: %s:%s</string>
+    <string name="lastupdate_display_format" formatted="false">Last Updated: %s</string>
     <string name="dashanalytics_preferences">DashAnalytics Preferences</string>
     <string name="dashadsense_preferences">DashAdSense Preferences</string>
     <string name="pref_select_period">Select Period</string>

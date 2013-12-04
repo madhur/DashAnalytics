@@ -36,6 +36,7 @@ public class DashAdSensePreferenceActivity extends BasePreferenceActivity
 	@Override
 	protected void SetListeners()
 	{
+		super.SetListeners();
 
 		findPreference(Keys.ADSENSE_PERIOD_ID.key).setOnPreferenceChangeListener(listPreferenceChangeListerner);
 

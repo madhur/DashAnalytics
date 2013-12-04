@@ -1,13 +1,16 @@
 package in.co.madhur.dashclock.dashadsense;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import in.co.madhur.dashclock.App;
 import in.co.madhur.dashclock.AppPreferences;
+import in.co.madhur.dashclock.AppPreferences.ADSENSE_KEYS;
 import in.co.madhur.dashclock.Connection;
 import in.co.madhur.dashclock.DisplayAttribute;
 import in.co.madhur.dashclock.Consts.ADSENSE_METRICS;
@@ -16,13 +19,14 @@ import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.APIResult;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import in.co.madhur.dashclock.Consts.API_STATUS;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.text.format.Time;
 import android.util.Log;
 
 import com.google.android.apps.dashclock.api.DashClockExtension;
 import com.google.android.apps.dashclock.api.ExtensionData;
+import com.google.android.apps.dashclock.configuration.AppChooserPreference;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.json.gson.GsonFactory;
@@ -47,7 +51,8 @@ public class DashAdsense extends DashClockExtension
 		// Check if user has changed the account, in that case, retrieve the new
 		// credential object
 
-		if (credential.getSelectedAccountName() == null	|| !credential.getSelectedAccountName().equals(appPreferences.getUserName()))
+		if (credential.getSelectedAccountName() == null
+				|| !credential.getSelectedAccountName().equals(appPreferences.getUserName()))
 		{
 			Log.d(App.TAG_ADSENSE, "Account changed, retrieving new cred object");
 
@@ -64,26 +69,14 @@ public class DashAdsense extends DashClockExtension
 
 		metrics.add(ADSENSE_METRICS.EARNINGS.toString());
 
-		if (appPreferences.getboolMetaData(Keys.SHOW_CLICKS))
+		for (ADSENSE_KEYS key : ADSENSE_KEYS.values())
 		{
-			metrics.add(ADSENSE_METRICS.CLICKS.toString());
-		}
-		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_VIEWS))
-		{
-			metrics.add(ADSENSE_METRICS.PAGE_VIEWS.toString());
-		}
+			if (appPreferences.getAdsenseProperty(key))
+			{
+				metrics.add(key.getMetric());
 
-		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_CTR))
-		{
-			metrics.add(ADSENSE_METRICS.PAGE_VIEWS_CTR.toString());
-		}
-		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_RPM))
-		{
-			metrics.add(ADSENSE_METRICS.PAGE_VIEWS_RPM.toString());
-		}
-		if (appPreferences.getboolMetaData(Keys.SHOW_CPC))
-		{
-			metrics.add(ADSENSE_METRICS.COST_PER_CLICK.toString());
+			}
+
 		}
 
 		if (TextUtils.isEmpty(AccountId))
@@ -109,15 +102,14 @@ public class DashAdsense extends DashClockExtension
 		super.onInitialize(isReconnect);
 		appPreferences = new AdSensePreferences(this);
 		scopes.add(AdSenseScopes.ADSENSE_READONLY);
-		
+
 		InitAuth();
-			
+
 	}
-	
-	
+
 	private void InitAuth()
 	{
-		
+
 		try
 		{
 			credential = GoogleAccountCredential.usingOAuth2(this, scopes);
@@ -127,8 +119,7 @@ public class DashAdsense extends DashClockExtension
 		catch (Exception e)
 		{
 
-			Log.e(App.TAG_ADSENSE, "Exception in onInitialize"
-					+ e.getMessage());
+			Log.e(App.TAG_ADSENSE, "Exception in onInitialize" + e.getMessage());
 		}
 
 	}
@@ -147,19 +138,16 @@ public class DashAdsense extends DashClockExtension
 		@Override
 		protected APIResult doInBackground(String... params)
 		{
-			AdsenseReportsGenerateResponse result = null;
+
 			try
 			{
-
-				result = GenerateReport.run(adsense_service, periodKey, isLocaltime, (ArrayList<String>) metrics);
+				return GenerateReport.run(adsense_service, periodKey, isLocaltime, (ArrayList<String>) metrics);
 			}
-			catch (Exception e)
+			catch (IOException e)
 			{
 				Log.e(App.TAG_ADSENSE, e.getMessage());
 				return new APIResult(e.getMessage());
 			}
-
-			return new AdSenseAPIResult(result);
 
 		}
 
@@ -177,10 +165,8 @@ public class DashAdsense extends DashClockExtension
 			AdsenseReportsGenerateResponse response = ((AdSenseAPIResult) resultAPI).getResult();
 
 			ArrayList<Headers> headers = (ArrayList<Headers>) response.getHeaders();
-			boolean showLastUpdate=appPreferences.getboolMetaData(Keys.SHOW_ADSENSE_LASTUPDATE);
-			
-			// response.getTotalMatchedRows()
-			
+			boolean showLastUpdate = appPreferences.getboolMetaData(Keys.SHOW_ADSENSE_LASTUPDATE);
+
 			if (response.getRows() != null)
 			{
 				if (!response.getRows().isEmpty())
@@ -193,7 +179,7 @@ public class DashAdsense extends DashClockExtension
 							if (headers.get(i).getCurrency() != null)
 							{
 								currency = headers.get(i).getCurrency();
-								
+
 							}
 							values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), headers.get(i).getType()));
 						}
@@ -247,14 +233,16 @@ public class DashAdsense extends DashClockExtension
 				expandedBody.append(lineString);
 				expandedBody.append("\n");
 			}
-			
-			if(showLastUpdate)
+
+			if (showLastUpdate)
 			{
-				Time t=new Time();
-				t.setToNow();
-				expandedBody.append(String.format(getString(R.string.lastupdate_display_format),t.hour, t.minute));
+				Date date = new Date();
+				java.text.DateFormat dateFormat = android.text.format.DateFormat.getTimeFormat(getBaseContext());
+				dateFormat.format(date);
+
+				expandedBody.append(String.format(getString(R.string.lastupdate_display_format), dateFormat.format(date)));
 				expandedBody.append("\n");
-				
+
 			}
 
 			if (showCurrency && currency != null)
@@ -268,10 +256,12 @@ public class DashAdsense extends DashClockExtension
 				expandedTitle = String.format(getString(R.string.adsense_title_display_format), getString(periodIdentifier), values.get(ADSENSE_METRICS.EARNINGS.toString()));
 			}
 
+			Intent clickIntent = AppChooserPreference.getIntentValue(appPreferences.getMetadata(Keys.ADSENSE_CLICK_INTENT), null);
+
 			try
 			{
 
-				publishUpdate(new ExtensionData().visible(true).status(status).icon(R.drawable.ic_dashadsense).expandedTitle(expandedTitle).expandedBody(expandedBody.toString()));
+				publishUpdate(new ExtensionData().visible(true).status(status).icon(R.drawable.ic_dashadsense).expandedTitle(expandedTitle).expandedBody(expandedBody.toString()).clickIntent(clickIntent));
 
 			}
 			catch (Exception e)

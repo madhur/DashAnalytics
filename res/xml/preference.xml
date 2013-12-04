@@ -21,7 +21,7 @@
         </ListPreference>
 
         <com.google.android.apps.dashclock.configuration.AppChooserPreference
-            android:key="click_intent"
+            android:key="analytics_click_intent"
             android:title="@string/click_behave_title" />
 
         <CheckBoxPreference

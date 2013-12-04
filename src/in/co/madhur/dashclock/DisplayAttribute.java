@@ -2,6 +2,7 @@ package in.co.madhur.dashclock;
 
 import in.co.madhur.dashclock.Consts.ATTRIBUTE_TYPE;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import android.text.TextUtils;
@@ -106,6 +107,16 @@ public class DisplayAttribute
 	public void setCurrencyCode(String currencyCode)
 	{
 		this.currencyCode = currencyCode;
+	}
+	
+	private static String fmt(double d)
+	{
+		if (d == (int) d)
+			return String.format("%d", (int) d);
+		else
+		{
+			return new DecimalFormat("#.##").format(d);
+		}
 	}
 
 }

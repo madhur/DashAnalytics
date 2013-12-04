@@ -31,6 +31,7 @@ public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 	@Override
 	protected void SetListeners()
 	{
+		super.SetListeners();
 		findPreference(Keys.METRIC_ID.key).setOnPreferenceChangeListener(listPreferenceChangeListerner);
 
 		findPreference(Keys.PERIOD_ID.key).setOnPreferenceChangeListener(listPreferenceChangeListerner);
