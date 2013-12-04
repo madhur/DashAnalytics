@@ -4,25 +4,31 @@ import com.google.android.apps.dashclock.configuration.AppChooserPreference;
 
 import in.co.madhur.dashclock.AppPreferences;
 import in.co.madhur.dashclock.AppPreferences.Keys;
-import in.co.madhur.dashclock.dashadsense.DashAdSensePreferenceActivity;
 import in.co.madhur.dashclock.dashanalytics.DashAnalyticsPreferenceActivity;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
-import android.inputmethodservice.Keyboard.Key;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 
 public abstract class BasePreferenceActivity extends PreferenceActivity
 {
 	protected AppPreferences appPreferences;
+	
+	OnSharedPreferenceChangeListener listener=new OnSharedPreferenceChangeListener()
+	{
+		
+		@Override
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+		{
+			EnableDisablePreferences();
+			
+		}
+	};
 
 	protected final OnPreferenceChangeListener listPreferenceChangeListerner = new OnPreferenceChangeListener()
 	{
@@ -43,6 +49,8 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
+	protected abstract void EnableDisablePreferences();
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -61,6 +69,9 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 		super.onResume();
 
 		SetListeners();
+		
+		EnableDisablePreferences();
+		this.appPreferences.sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
 
 	}
 

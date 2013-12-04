@@ -45,11 +45,12 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-core:2.3.0-rc1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.0-rc1'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.0-rc1'
-    compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.google.guava:guava:15.0'
+   
+   
     compile 'com.google.api-client:google-api-client-gson:1.17.0-rc'
     compile 'com.google.api-client:google-api-client:1.17.0-rc'
     compile 'com.google.api-client:google-api-client-android:1.17.0-rc'
+    compile 'com.google.apis:google-api-services-adsense:v1.3-rev38-1.17.0-rc'
     
      compile files('libs/crittercism_v4_2_0_sdkonly.jar')
      compile files('libs/libGoogleAnalyticsServices.jar')

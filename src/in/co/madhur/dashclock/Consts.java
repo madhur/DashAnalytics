@@ -18,7 +18,9 @@ public class Consts
 		TODAY("today"),
 		YESTERDAY("yesterday"),
 		THISMONTH("thismonth"),
-		LASTMONTH("lastmonth");
+		LASTMONTH("lastmonth"),
+		LASTWEEK("lastweek"),
+		LAST30DAYS("last30days");
 
 		private String key;
 

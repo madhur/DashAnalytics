@@ -87,7 +87,6 @@ public class AdsenseDataService extends DataService
 
 				try
 				{
-					Log.v(App.TAG, e.getMessage().substring(e.getMessage().indexOf("{")));
 					JSONObject json = new JSONObject(new JSONTokener(e.getMessage().substring(e.getMessage().indexOf("{"))));
 					JSONObject error = json.getJSONArray("errors").getJSONObject(0);
 					message = error.getString("message");

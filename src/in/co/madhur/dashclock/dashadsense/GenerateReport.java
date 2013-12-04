@@ -36,8 +36,6 @@ public class GenerateReport
 		
 	{
 
-		// Prepare report.
-		Date today = new Date();
 		Calendar calendar = Calendar.getInstance();
 		String startDate = null, endDate = null;
 

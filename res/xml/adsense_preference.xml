@@ -27,45 +27,48 @@
         <com.google.android.apps.dashclock.configuration.AppChooserPreference
             android:key="adsense_click_intent"
             android:title="@string/click_behave_title" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_adsense_showlastupdate"
-            android:summary="@string/pref_showlastupdate_desc"
-            android:title="@string/pref_showlastupdate" />
-     
     </PreferenceCategory>
-
-    <PreferenceScreen
-        android:summary="Select additional attributes to display"
-        android:title="Select additional attributes to display" >
-        <PreferenceCategory android:title="@string/pref_attributes" >
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showpageviews"
-                android:summary="@string/pref_showpageviews_desc"
-                android:title="@string/pref_showpageviews" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showclicks"
-                android:summary="@string/pref_showclicks_desc"
-                android:title="@string/pref_showclicks" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showpagectr"
-                android:summary="@string/pref_showpagectr_desc"
-                android:title="@string/pref_showpagectr" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showpagerpm"
-                android:summary="@string/pref_showpagerpm_desc"
-                android:title="@string/pref_showpagerpm" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showcpc"
-                android:summary="@string/pref_showcpc_desc"
-                android:title="@string/pref_showcpc" />
-        </PreferenceCategory>
-    </PreferenceScreen>
+    <PreferenceCategory
+        android:summary="@string/pref_additional_attributes"
+        android:title="@string/pref_additional_attributes" >
+        <PreferenceScreen
+            android:summary="@string/pref_additional_attributes_desc"
+            android:title="@string/pref_additional_attributes_title" >
+            <PreferenceCategory android:title="@string/pref_core_attributes" >
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_adsense_showlastupdate"
+                    android:summary="@string/pref_showlastupdate_desc"
+                    android:title="@string/pref_showlastupdate" />
+            </PreferenceCategory>
+            <PreferenceCategory android:title="@string/pref_attributes" >
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showpageviews"
+                    android:summary="@string/pref_showpageviews_desc"
+                    android:title="@string/pref_showpageviews" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showclicks"
+                    android:summary="@string/pref_showclicks_desc"
+                    android:title="@string/pref_showclicks" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showpagectr"
+                    android:summary="@string/pref_showpagectr_desc"
+                    android:title="@string/pref_showpagectr" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showpagerpm"
+                    android:summary="@string/pref_showpagerpm_desc"
+                    android:title="@string/pref_showpagerpm" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showcpc"
+                    android:summary="@string/pref_showcpc_desc"
+                    android:title="@string/pref_showcpc" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
 
 </PreferenceScreen>

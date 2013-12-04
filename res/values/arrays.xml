@@ -4,6 +4,9 @@
     <string-array name="pref_period">
         <item>@string/today</item>
         <item>@string/yesterday</item>
+        <item>@string/lastweek</item>
+        <item>@string/lastmonth</item>
+        <item>@string/last30days</item>
     </string-array>
     
      <string-array name="pref_adsense_period">
@@ -23,6 +26,9 @@
       <string-array name="pref_period_values">
         <item>today</item>
         <item>yesterday</item>
+        <item>lastweek</item>
+        <item>lastmonth</item>
+        <item>last30days</item>
     </string-array>
      
     <string-array name="pref_metric_values">

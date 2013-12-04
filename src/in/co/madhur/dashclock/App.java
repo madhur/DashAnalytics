@@ -11,7 +11,7 @@ public class App extends Application
 	private static Bus bus;
 	public static String TAG="DashAnalytics";
 	public static String TAG_ADSENSE="DashAdSense";
-	public static String TAG_BASE="DashClock";
+	public static String TAG_BASE="DashAnalyticsBase";
 	
 	public static final boolean DEBUG = true;
 	public static final boolean LOCAL_LOGV = DEBUG;

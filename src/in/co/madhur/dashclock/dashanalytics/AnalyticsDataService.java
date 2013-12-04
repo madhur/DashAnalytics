@@ -171,7 +171,7 @@ public class AnalyticsDataService extends DataService
 			}
 			catch (IOException e)
 			{
-				e.printStackTrace();
+				Log.e(App.TAG, e.getMessage());
 			}
 
 			return new AccountResult(acProfiles, true);

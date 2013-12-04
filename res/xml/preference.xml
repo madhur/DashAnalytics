@@ -29,12 +29,12 @@
     
     
     <PreferenceCategory
-        android:summary="Select additional attributes to display"
-        android:title="Select additional attributes to display" >
+        android:summary="@string/pref_additional_attributes"
+        android:title="@string/pref_additional_attributes" >
         <PreferenceScreen
-            android:summary="Select additional attributes to display"
-            android:title="Select additional attributes to display" >
-            <PreferenceCategory android:title="Core Settings" >
+            android:summary="@string/pref_additional_attributes_desc"
+            android:title="@string/pref_additional_attributes_title" >
+            <PreferenceCategory android:title="@string/pref_core_attributes" >
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="pref_analytics_showprofile"

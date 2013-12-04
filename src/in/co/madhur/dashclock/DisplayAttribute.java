@@ -2,7 +2,6 @@ package in.co.madhur.dashclock;
 
 import in.co.madhur.dashclock.Consts.ATTRIBUTE_TYPE;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import android.text.TextUtils;
@@ -78,7 +77,7 @@ public class DisplayAttribute
 					
 				case FLOAT:
 					NumberFormat n = NumberFormat.getNumberInstance();
-					n.setMinimumFractionDigits(2);
+					//n.setMinimumFractionDigits(2);
 					n.setMaximumFractionDigits(2);
 					return n.format(Double.parseDouble(value));
 					
@@ -117,14 +116,14 @@ public class DisplayAttribute
 		this.currencyCode = currencyCode;
 	}
 	
-	private static String fmt(double d)
-	{
-		if (d == (int) d)
-			return String.format("%d", (int) d);
-		else
-		{
-			return new DecimalFormat("#.##").format(d);
-		}
-	}
+//	private static String fmt(double d)
+//	{
+//		if (d == (int) d)
+//			return String.format("%d", (int) d);
+//		else
+//		{
+//			return new DecimalFormat("#.##").format(d);
+//		}
+//	}
 
 }

@@ -12,6 +12,8 @@
     <string name="yesterday">Yesterday</string>
     <string name="thismonth">This month</string>
     <string name="lastmonth">Last month</string>
+    <string name="last30days">Last 30 days</string>
+    <string name="lastweek">Last Week</string>
     <string name="ga_visits">Visits</string>
     <string name="ga_visitors">Visitors</string>
     <string name="ga_newVisits">New visits</string>
@@ -112,6 +114,12 @@
 	    <string name="click_behave_title">Click behavior</string>
 	      <string name="title_apps">Apps</string>
     <string name="title_shortcuts">Shortcuts</string>
+    
+    <string name="pref_additional_attributes">Additional attributes</string>
+    <string name="pref_additional_attributes_desc">5 Additional attributes can be selected</string>
+    <string name="pref_additional_attributes_title">Select additional attributes to display</string>
+    
+    <string name="pref_core_attributes">Core attributes</string>
     
     
 </resources>
