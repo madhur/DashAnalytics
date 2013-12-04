@@ -12,21 +12,21 @@
     <string name="yesterday">Yesterday</string>
     <string name="thismonth">This month</string>
     <string name="lastmonth">Last month</string>
-    <string name="visits">Visits</string>
-    <string name="visitors">Visitors</string>
-    <string name="newVisits">New visits</string>
-    <string name="percentNewVisits">Percentage New Visits</string>
+    <string name="ga_visits">Visits</string>
+    <string name="ga_visitors">Visitors</string>
+    <string name="ga_newVisits">New visits</string>
+    <string name="ga_percentNewVisits">Percentage New Visits</string>
     
-    <string name="screenviews">Screen Views</string>
-    <string name="uniqueScreenviews">Unique Screen Views</string>
-    <string name="screenviewsPerSession">Screen Views Per Session</string>
-    <string name="timeOnScreen">Time on Screen</string>
-    <string name="avgScreenviewDuration">Average Screen View Duration</string>
+    <string name="ga_screenviews">Screen Views</string>
+    <string name="ga_uniqueScreenviews">Unique Screen Views</string>
+    <string name="ga_screenviewsPerSession">Screen Views Per Session</string>
+    <string name="ga_timeOnScreen">Time on Screen</string>
+    <string name="ga_avgScreenviewDuration">Average Screen View Duration</string>
     
-    <string name="pageviews">Page Views</string>
+    <string name="ga_pageviews">Page Views</string>
         
-    <string name="visitBounceRate">Bounce Rate</string>
-    <string name="pageviewsPerVisit">Page Views Per Visit</string>
+    <string name="ga_visitBounceRate">Bounce Rate</string>
+    <string name="ga_pageviewsPerVisit">Page Views Per Visit</string>
         
     
     <string name="gps_missing">Your phone seems to be missing Google Play Services. If it\'s a custom ROM make sure you have installed GApps package</string>
@@ -43,6 +43,7 @@
     <string name="adsense_title_display_format_withcurrency" formatted="false">Earnings %s: %s %s</string>
     <string name="adsense_status_display_format_withcurrency" formatted="false">%s %s</string>
     <string name="body_display_format" formatted="false">%s (%s)</string>
+    <string name="lastupdate_display_format" formatted="false">Last Updated: %s:%s</string>
     <string name="dashanalytics_preferences">DashAnalytics Preferences</string>
     <string name="dashadsense_preferences">DashAdSense Preferences</string>
     <string name="pref_select_period">Select Period</string>
@@ -56,7 +57,7 @@
     <string name="pref_adsense_usetimezonee_desc">Whether the earnings should be displayed in the AdSense account\'s local timezone. If false default PST timezone will be used</string>
 	<string name="pref_showcurrency">Show currency</string>
 	<string name="pref_showcurrency_desc">Show currency</string>
-	<string name="pref_adsense_attributes">Select additional attributes to display</string>
+	<string name="pref_attributes">Select additional attributes to display</string>
 	
 	<string name="pref_showpageviews">Page Views</string>
 	<string name="pref_showpageviews_desc">The number of page views.</string>
@@ -75,7 +76,42 @@
 	
 	 <string name="pref_shortcut_default">Default</string>
 	 
+	 <string name="pref_showvisits">Visits/Sessions</string>
+	 <string name="pref_showvisits_desc">Counts the total number of sessions</string>
+	 
+	 <string name="pref_showvisitors">Unique Visitors/Active Users</string>
+	 <string name="pref_showvisitors_desc">Total number of visitors to your property for the requested time period.</string>
+	 
+	 <string name="pref_shownewVisits">New Visits/New Users</string>
+	 <string name="pref_shownewVisits_desc">The number of visitors whose visit to your property was marked as a first-time visit.</string>
+	 
+	 <string name="pref_showpercentNewVisits" formatted="false"> % New Visits/% New Sessions</string>
+	 <string name="pref_showpercentNewVisits_desc"> The percentage of visits by people who had never visited your property before</string>
+	 
+	 <string name="pref_showvisitBounceRate">Bounce Rate</string>
+	 <string name="pref_showvisitBounceRate_desc">The percentage of single-page visits (i.e., visits in which the person left your property from the first page).</string>
+	 
+	 <string name="pref_showpageviewsPerVisit">Pages / Visit</string>
+	 <string name="pref_showpageviewsPerVisit_desc">The average number of pages viewed during a visit to your property. Repeated views of a single page are counted.</string>
+	 
+	 <string name="pref_showscreenviews">Screen Views</string>
+	 <string name="pref_showscreenviews_desc">The total number of screenviews.</string>
+	 
+	 <string name="pref_showuniqueScreenviews"> Unique Screen Views</string>
+	 <string name="pref_showuniqueScreenviews_desc">The number of different (unique) screenviews within a session.</string>
+	 
+	 <string name="pref_showscreenviewsPerSession">Screens / Session</string>
+	 <string name="pref_showscreenviewsPerSession_desc">The average number of screenviews per session.</string>
+	 
+	 <string name="pref_showlastupdate">Show Last Update Time</string>
+	 <string name="pref_showlastupdate_desc">Show Last Update Time</string>
+	 
+	  <string name="pref_analytics_showprofile">Show Profile Name</string>
+	  <string name="pref_analytics_showprofile_desc">Show Profile Name and Property</string>
+	 
 	    <string name="click_behave_title">Click behavior</string>
 	      <string name="title_apps">Apps</string>
     <string name="title_shortcuts">Shortcuts</string>
+    
+    
 </resources>

@@ -3,17 +3,28 @@ package in.co.madhur.dashclock.dashanalytics;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import in.co.madhur.dashclock.App;
 import in.co.madhur.dashclock.AppPreferences;
+import in.co.madhur.dashclock.DisplayAttribute;
+import in.co.madhur.dashclock.AppPreferences.ANALYTICS_KEYS;
 import in.co.madhur.dashclock.Connection;
+import in.co.madhur.dashclock.Consts.ANALYTICS_METRICS;
 import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.APIResult;
 import in.co.madhur.dashclock.AppPreferences.Keys;
+import in.co.madhur.dashclock.Consts.ADSENSE_METRICS;
 import in.co.madhur.dashclock.Consts.API_STATUS;
+import in.co.madhur.dashclock.Consts.ATTRIBUTE_TYPE;
+import in.co.madhur.dashclock.dashadsense.DashAdsense;
 import android.os.AsyncTask;
+import android.os.Debug;
 import android.text.TextUtils;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.google.android.apps.dashclock.api.DashClockExtension;
@@ -25,6 +36,7 @@ import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.Analytics.Data.Ga.Get;
 import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analytics.model.GaData;
+import com.google.api.services.analytics.model.GaData.ColumnHeaders;
 
 public class DashAnalytics extends DashClockExtension
 {
@@ -35,9 +47,13 @@ public class DashAnalytics extends DashClockExtension
 
 	List<String> scopes = new ArrayList<String>();
 
+	List<String> metrics = new ArrayList<String>();
+	
 	@Override
 	protected void onUpdateData(int arg0)
 	{
+		
+		
 		// Check if user has changed the account, in that case, retrieve the new
 		// credential object
 
@@ -52,6 +68,18 @@ public class DashAnalytics extends DashClockExtension
 		ProfileId = appPreferences.getMetadata(Keys.PROFILE_ID);
 		metricKey = appPreferences.getMetadata(Keys.METRIC_ID);
 		periodKey = appPreferences.getMetadata(Keys.PERIOD_ID);
+		
+		metrics.clear();
+		metrics.add(metricKey);
+		for(ANALYTICS_KEYS key : ANALYTICS_KEYS.values())
+		{
+			if(appPreferences.getAnalyticProperty(key))
+			{
+				metrics.add(key.getMetric());
+				
+			}
+			
+		}
 
 		if (TextUtils.isEmpty(ProfileId))
 		{
@@ -110,30 +138,13 @@ public class DashAnalytics extends DashClockExtension
 		@Override
 		protected APIResult doInBackground(String... params)
 		{
-			try
-			{
-				Get apiQuery = analytics_service.data().ga().get("ga:"
-						+ ProfileId, periodKey, periodKey, "ga:" + metricKey);
-				Log.d(App.TAG, apiQuery.toString());
-
-				return new AnalyticsAPIResult(apiQuery.execute());
-			}
-			catch (UnknownHostException e)
-			{
-				Log.e(App.TAG, "Exception unknownhost in doInBackground"
-						+ e.getMessage());
-				return new APIResult(e.getMessage());
-			}
-			catch (Exception e)
-			{
-				Log.e(App.TAG, "Exception in doInBackground" + e.getMessage());
-				return new APIResult(e.getMessage());
-			}
+			return GenerateReport.run(analytics_service, ProfileId, periodKey, (ArrayList<String>) metrics);
 		}
 
 		@Override
 		protected void onPostExecute(APIResult resultAPI)
 		{
+			HashMap<String, DisplayAttribute> values = new HashMap<String, DisplayAttribute>();
 			// Do not do anything if there is a failure, could be network
 			// condition.
 			if (resultAPI.getStatus() == API_STATUS.FAILURE)
@@ -143,13 +154,19 @@ public class DashAnalytics extends DashClockExtension
 
 			String profileName = appPreferences.getMetadata(Keys.PROFILE_NAME);
 			String selectedProperty = appPreferences.getMetadata(Keys.PROPERTY_NAME);
-			String metricKey = appPreferences.getMetadata(Keys.METRIC_ID);
+//			String metricKey = appPreferences.getMetadata(Keys.METRIC_ID);
+			Log.d(App.TAG, "metricL "+metricKey);
 			int metricIdentifier = getResources().getIdentifier(metricKey, "string", DashAnalytics.this.getPackageName());
 			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAnalytics.this.getPackageName());
+			boolean showProfile=appPreferences.getboolMetaData(Keys.SHOW_PROFILE);
+			boolean showLastUpdate=appPreferences.getboolMetaData(Keys.SHOW_ANALYTICS_LASTUPDATE);
+			
 			String result;
 
 			if (App.LOCAL_LOGV)
 				Log.v(App.TAG, "Processing result for " + profileName);
+			
+			List<ColumnHeaders> columnHeaders=results.getColumnHeaders();
 
 			if (results != null)
 			{
@@ -157,19 +174,33 @@ public class DashAnalytics extends DashClockExtension
 				{
 					if (!results.getRows().isEmpty())
 					{
-
-						result = results.getRows().get(0).get(0);
-
-						try
+						
+						for (List<String> row : results.getRows())
 						{
-							Double numResult = Double.parseDouble(result);
 
-							result = fmt(numResult);
+							for (int i = 0; i < columnHeaders.size(); ++i)
+							{
+									values.put(columnHeaders.get(i).getName().replace(':', '_'), new DisplayAttribute(row.get(i), columnHeaders.get(i).getDataType()));
+							}
+
+							// break after first iteration
+							break;
+
 						}
-						catch (NumberFormatException e)
-						{
-							Log.e(App.TAG, e.getMessage());
-						}
+						
+
+//						result = results.getRows().get(0).get(0);
+//
+//						try
+//						{
+//							Double numResult = Double.parseDouble(result);
+//
+//							result = fmt(numResult);
+//						}
+//						catch (NumberFormatException e)
+//						{
+//							Log.e(App.TAG, e.getMessage());
+//						}
 					}
 					else
 					{
@@ -197,10 +228,56 @@ public class DashAnalytics extends DashClockExtension
 				publishUpdate(null);
 				return;
 			}
+			
+			StringBuilder expandedBody = new StringBuilder();
+			String status=values.get(metricKey).toString();
+			Log.d(App.TAG, String.valueOf(metricIdentifier));
+			
+			String expandedTitle = "";
+			
+			if(metricIdentifier!=0)
+				expandedTitle=String.format(getString(R.string.title_display_format), getString(metricIdentifier), getString(periodIdentifier), status);
+			else
+				Log.d(App.TAG, "could not match resources:" + metricKey);
+			
+			Set<String> heads = values.keySet();
+			for (String header : heads)
+			{
+				String lineString = null;
+
+				if (header.equalsIgnoreCase(ANALYTICS_METRICS.getByMetric(metricKey).toString()))
+					continue;
+				
+				
+
+				int stringIdentifier = getResources().getIdentifier(header, "string", DashAnalytics.this.getPackageName());
+
+				if(stringIdentifier!=0)
+				{
+				lineString = String.format(getString(R.string.adsense_attribute_display_format), getString(stringIdentifier), values.get(header));
+				}
+
+				expandedBody.append(lineString);
+				expandedBody.append("\n");
+			}
+			
+			if(showProfile)
+			{
+				expandedBody.append(String.format(getString(R.string.body_display_format), profileName, selectedProperty));
+				expandedBody.append("\n");
+			}
+			if(showLastUpdate)
+			{
+				Time t=new Time();
+				t.setToNow();
+				expandedBody.append(String.format(getString(R.string.lastupdate_display_format),t.hour, t.minute));
+				expandedBody.append("\n");
+				
+			}
 
 			try
 			{
-				publishUpdate(new ExtensionData().visible(true).status(result).icon(R.drawable.ic_dashclock).expandedTitle(String.format(getString(R.string.title_display_format), getString(metricIdentifier), getString(periodIdentifier), result)).expandedBody(String.format(getString(R.string.body_display_format), profileName, selectedProperty)));
+				publishUpdate(new ExtensionData().visible(true).status(status).icon(R.drawable.ic_dashclock).expandedTitle(expandedTitle).expandedBody(expandedBody.toString()));
 			}
 			catch (Exception e)
 			{

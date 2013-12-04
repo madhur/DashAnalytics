@@ -1,12 +1,12 @@
-package in.co.madhur.dashclock.dashadsense;
+package in.co.madhur.dashclock;
+
+import in.co.madhur.dashclock.Consts.ATTRIBUTE_TYPE;
 
 import java.text.NumberFormat;
 
 import android.text.TextUtils;
 import android.util.Log;
 
-import in.co.madhur.dashclock.App;
-import in.co.madhur.dashclock.Consts.ATTRIBUTE_TYPE;
 
 public class DisplayAttribute
 {
@@ -14,10 +14,10 @@ public class DisplayAttribute
 	private ATTRIBUTE_TYPE type;
 	private String currencyCode;
 
-	public DisplayAttribute(String val, ATTRIBUTE_TYPE type)
+	public DisplayAttribute(String val, String type)
 	{
 		this.value = val;
-		this.type = type;
+		this.type = ATTRIBUTE_TYPE.valueOf(type);
 	}
 	
 	public DisplayAttribute(String val, ATTRIBUTE_TYPE type, String currencyCode)
@@ -65,17 +65,25 @@ public class DisplayAttribute
 		{
 			switch (type)
 			{
-				case CURRENCY:
+				case METRIC_CURRENCY:
 					
 					return NumberFormat.getNumberInstance().format(Double.parseDouble(value));
 
-				case NUMBER:
+				case INTEGER:
 					return NumberFormat.getNumberInstance().format(Double.parseDouble(value));
-
-				case PERCENTAGE:
+					
+				case METRIC_TALLY:
+					return NumberFormat.getNumberInstance().format(Double.parseDouble(value));
+					
+				case METRIC_RATIO:
 					NumberFormat ni = NumberFormat.getPercentInstance();
 					ni.setMinimumFractionDigits(2);
 					return ni.format(Double.parseDouble(value));
+					
+				case PERCENT:
+					NumberFormat nii = NumberFormat.getPercentInstance();
+					nii.setMinimumFractionDigits(2);
+					return nii.format(Double.parseDouble(value)/100);
 
 				default:
 					return value;

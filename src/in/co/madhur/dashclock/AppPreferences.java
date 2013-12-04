@@ -1,5 +1,6 @@
 package in.co.madhur.dashclock;
 
+import in.co.madhur.dashclock.Consts.ANALYTICS_METRICS;
 import in.co.madhur.dashclock.API.GNewProfile;
 
 import java.io.IOException;
@@ -42,6 +43,9 @@ public abstract class AppPreferences
 		SHOW_PAGE_CTR("pref_showpagectr"),
 		SHOW_PAGE_RPM("pref_showpagerpm"),
 		SHOW_CPC("pref_showcpc"),
+		SHOW_PROFILE("pref_analytics_showprofile"),
+		SHOW_ADSENSE_LASTUPDATE("pref_adsense_showlastupdate"),
+		SHOW_ANALYTICS_LASTUPDATE("pref_analytics_showlastupdate"),
 		AUTH_TOKEN("pref_auth_token");
 
 		public final String key;
@@ -53,6 +57,37 @@ public abstract class AppPreferences
 		}
 
 	};
+	
+	public enum ANALYTICS_KEYS 
+	{
+		SHOW_VISITORS("pref_showvisitors", ANALYTICS_METRICS.VISITORS),
+		SHOW_NEW_VISITS("pref_shownewVisits", ANALYTICS_METRICS.NEW_VISITS),
+		SHOW_PERCENT_NEWVISITS("pref_showpercentNewVisits", ANALYTICS_METRICS.PERCENT_NEW_VISITS),
+		SHOW_VISITS("pref_showvisits", ANALYTICS_METRICS.VISITS),
+		SHOW_BOUNCERATE("pref_showvisitBounceRate", ANALYTICS_METRICS.BOUNCE_RATE),
+		SHOW_PAGEVIEWS("pref_showpageviews", ANALYTICS_METRICS.PAGE_VIEWS),
+		SHOW_PAGEVIEWS_PERVISIT("pref_showpageviewsPerVisit", ANALYTICS_METRICS.PAGE_VIEWS_PER_VISIT),
+		SHOW_SCREEN_VIEWS("pref_showscreenviews", ANALYTICS_METRICS.SCREEN_VIEWS),
+		SHOW_UNIQUE_SCREENVIEWS("pref_showuniqueScreenviews", ANALYTICS_METRICS.UNIQUE_SCREEN_VIEWS),
+		SHOW_SCREENVIEWS_PERSESSION("pref_showscreenviewsPerSession", ANALYTICS_METRICS.SCREEN_VIEWS_PER_SESSION);
+		
+		public final String key;
+		public final String metric;
+
+		private ANALYTICS_KEYS(String key, ANALYTICS_METRICS metric)
+		{
+			this.key = key;
+			this.metric=metric.toString();
+
+		}
+		
+		public String getMetric()
+		{
+			
+			return metric;
+		}
+	
+	}
 
 	public void setAuthToken(String token)
 	{
@@ -112,6 +147,14 @@ public abstract class AppPreferences
 		
 		return sharedPreferences.getBoolean(key.key, defValue);
 	}
+	
+	public boolean getAnalyticProperty(ANALYTICS_KEYS key)
+	{
+		boolean defValue=false;
+		
+		return sharedPreferences.getBoolean(key.key, defValue);
+	}
+	
 	
 	public boolean isLocalTime()
 	{

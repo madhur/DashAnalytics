@@ -13,5 +13,6 @@ public class AnalyticsPreferences extends AppPreferences
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		
 	}
+	
 
 }

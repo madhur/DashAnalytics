@@ -9,7 +9,8 @@ import java.util.Set;
 import in.co.madhur.dashclock.App;
 import in.co.madhur.dashclock.AppPreferences;
 import in.co.madhur.dashclock.Connection;
-import in.co.madhur.dashclock.Consts.APIMetrics;
+import in.co.madhur.dashclock.DisplayAttribute;
+import in.co.madhur.dashclock.Consts.ADSENSE_METRICS;
 import in.co.madhur.dashclock.Consts.ATTRIBUTE_TYPE;
 import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.APIResult;
@@ -17,6 +18,7 @@ import in.co.madhur.dashclock.AppPreferences.Keys;
 import in.co.madhur.dashclock.Consts.API_STATUS;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.google.android.apps.dashclock.api.DashClockExtension;
@@ -60,28 +62,28 @@ public class DashAdsense extends DashClockExtension
 
 		metrics.clear();
 
-		metrics.add(APIMetrics.EARNINGS.toString());
+		metrics.add(ADSENSE_METRICS.EARNINGS.toString());
 
 		if (appPreferences.getboolMetaData(Keys.SHOW_CLICKS))
 		{
-			metrics.add(APIMetrics.CLICKS.toString());
+			metrics.add(ADSENSE_METRICS.CLICKS.toString());
 		}
 		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_VIEWS))
 		{
-			metrics.add(APIMetrics.PAGE_VIEWS.toString());
+			metrics.add(ADSENSE_METRICS.PAGE_VIEWS.toString());
 		}
 
 		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_CTR))
 		{
-			metrics.add(APIMetrics.PAGE_VIEWS_CTR.toString());
+			metrics.add(ADSENSE_METRICS.PAGE_VIEWS_CTR.toString());
 		}
 		if (appPreferences.getboolMetaData(Keys.SHOW_PAGE_RPM))
 		{
-			metrics.add(APIMetrics.PAGE_VIEWS_RPM.toString());
+			metrics.add(ADSENSE_METRICS.PAGE_VIEWS_RPM.toString());
 		}
 		if (appPreferences.getboolMetaData(Keys.SHOW_CPC))
 		{
-			metrics.add(APIMetrics.COST_PER_CLICK.toString());
+			metrics.add(ADSENSE_METRICS.COST_PER_CLICK.toString());
 		}
 
 		if (TextUtils.isEmpty(AccountId))
@@ -175,7 +177,7 @@ public class DashAdsense extends DashClockExtension
 			AdsenseReportsGenerateResponse response = ((AdSenseAPIResult) resultAPI).getResult();
 
 			ArrayList<Headers> headers = (ArrayList<Headers>) response.getHeaders();
-
+			boolean showLastUpdate=appPreferences.getboolMetaData(Keys.SHOW_ADSENSE_LASTUPDATE);
 			
 			// response.getTotalMatchedRows()
 			
@@ -191,16 +193,9 @@ public class DashAdsense extends DashClockExtension
 							if (headers.get(i).getCurrency() != null)
 							{
 								currency = headers.get(i).getCurrency();
-								values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.CURRENCY));
+								
 							}
-							else if (headers.get(i).getName().equals(APIMetrics.PAGE_VIEWS_CTR.toString()))
-							{
-								values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.PERCENTAGE));
-							}
-							else
-							{
-								values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), ATTRIBUTE_TYPE.NUMBER));
-							}
+							values.put(headers.get(i).getName(), new DisplayAttribute(row.get(i), headers.get(i).getType()));
 						}
 
 						// break after first iteration
@@ -238,12 +233,12 @@ public class DashAdsense extends DashClockExtension
 			{
 				String lineString;
 
-				if (header.equalsIgnoreCase(APIMetrics.EARNINGS.toString()))
+				if (header.equalsIgnoreCase(ADSENSE_METRICS.EARNINGS.toString()))
 					continue;
 
 				int stringIdentifier = getResources().getIdentifier(header, "string", DashAdsense.this.getPackageName());
 				DisplayAttribute dispValue = values.get(header);
-				if (dispValue.getType() == ATTRIBUTE_TYPE.CURRENCY
+				if (dispValue.getType() == ATTRIBUTE_TYPE.METRIC_CURRENCY
 						&& showCurrency)
 					lineString = String.format(getString(R.string.adsense_attribute_display_format_withcurrency), getString(stringIdentifier), Currency.getInstance(currency).getSymbol(), values.get(header));
 				else
@@ -252,16 +247,25 @@ public class DashAdsense extends DashClockExtension
 				expandedBody.append(lineString);
 				expandedBody.append("\n");
 			}
+			
+			if(showLastUpdate)
+			{
+				Time t=new Time();
+				t.setToNow();
+				expandedBody.append(String.format(getString(R.string.lastupdate_display_format),t.hour, t.minute));
+				expandedBody.append("\n");
+				
+			}
 
 			if (showCurrency && currency != null)
 			{
-				status = String.format(getString(R.string.adsense_status_display_format_withcurrency), Currency.getInstance(currency).getSymbol(), values.get(APIMetrics.EARNINGS.toString()));
-				expandedTitle = String.format(getString(R.string.adsense_title_display_format_withcurrency), getString(periodIdentifier), Currency.getInstance(currency).getSymbol(), values.get(APIMetrics.EARNINGS.toString()));
+				status = String.format(getString(R.string.adsense_status_display_format_withcurrency), Currency.getInstance(currency).getSymbol(), values.get(ADSENSE_METRICS.EARNINGS.toString()));
+				expandedTitle = String.format(getString(R.string.adsense_title_display_format_withcurrency), getString(periodIdentifier), Currency.getInstance(currency).getSymbol(), values.get(ADSENSE_METRICS.EARNINGS.toString()));
 			}
 			else
 			{
-				status = values.get(APIMetrics.EARNINGS.toString()).getFormattedValue();
-				expandedTitle = String.format(getString(R.string.adsense_title_display_format), getString(periodIdentifier), values.get(APIMetrics.EARNINGS.toString()));
+				status = values.get(ADSENSE_METRICS.EARNINGS.toString()).getFormattedValue();
+				expandedTitle = String.format(getString(R.string.adsense_title_display_format), getString(periodIdentifier), values.get(ADSENSE_METRICS.EARNINGS.toString()));
 			}
 
 			try

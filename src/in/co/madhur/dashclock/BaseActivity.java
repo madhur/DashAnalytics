@@ -51,6 +51,7 @@ public abstract class BaseActivity extends Activity
 	protected boolean mBound = false;
 	protected static final int REQUEST_AUTHORIZATION = 2;
 	protected ArrayList<GNewProfile> acProfiles;
+	protected UpdateUIClass UpdateUI=new UpdateUIClass();
 
 	protected ServiceConnection mConnection = new ServiceConnection()
 	{
@@ -103,7 +104,7 @@ public abstract class BaseActivity extends Activity
 		if (acProfiles == null)
 		{
 			if (App.LOCAL_LOGV)
-				Log.v(App.TAB_BASE, "Initing accounts from net for "
+				Log.v(App.TAG_BASE, "Initing accounts from net for "
 						+ selectedAccount);
 			
 			if (Connection.isConnected(this))
@@ -112,16 +113,16 @@ public abstract class BaseActivity extends Activity
 			}
 			else
 			{
-				new UpdateUIClass().UpdateUI(new AccountResult( getString(R.string.network_not_connected)));
+				UpdateUI.UpdateUI(new AccountResult( getString(R.string.network_not_connected)));
 			}
 		}
 		else
 		{
 			if (App.LOCAL_LOGV)
-				Log.v(App.TAB_BASE, "Initing accounts from cache for "
+				Log.v(App.TAG_BASE, "Initing accounts from cache for "
 						+ selectedAccount);
 
-			new UpdateUIClass().UpdateUI(new AccountResult(acProfiles, false));
+			UpdateUI.UpdateUI(new AccountResult(acProfiles, false));
 			UpdateSelectionPreferences();
 		}
 
@@ -139,7 +140,7 @@ public abstract class BaseActivity extends Activity
 		int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
 		if (status != ConnectionResult.SUCCESS)
 		{
-			Log.e(App.TAB_BASE, String.valueOf(status));
+			Log.e(App.TAG_BASE, String.valueOf(status));
 			Toast.makeText(this, getString(R.string.gps_missing), Toast.LENGTH_LONG).show();
 			finish();
 			return;
@@ -168,7 +169,7 @@ public abstract class BaseActivity extends Activity
 			}
 		});
 
-		App.getEventBus().register(new UpdateUIClass());
+		App.getEventBus().register(UpdateUI);
 
 	}
 
@@ -226,7 +227,7 @@ public abstract class BaseActivity extends Activity
 				if (getAccountsList().size() >= itemPosition)
 				{
 					if (App.LOCAL_LOGV)
-						Log.v(App.TAB_BASE, "Fetching accounts for:"
+						Log.v(App.TAG_BASE, "Fetching accounts for:"
 								+ getAccountsList().get(itemPosition));
 
 					credential.setSelectedAccountName(getAccountsList().get(itemPosition));
@@ -249,7 +250,7 @@ public abstract class BaseActivity extends Activity
 			if (index != -1)
 				getActionBar().setSelectedNavigationItem(index);
 			else
-				Log.e(App.TAB_BASE, "acount not found");
+				Log.e(App.TAG_BASE, "acount not found");
 		}
 
 	}
@@ -440,7 +441,7 @@ public abstract class BaseActivity extends Activity
 						if (result.isPersist() && acProfiles.size() > 0)
 						{
 							if (App.LOCAL_LOGV)
-								Log.v(App.TAB_BASE, "saving configdata");
+								Log.v(App.TAG_BASE, "saving configdata");
 
 							try
 							{
