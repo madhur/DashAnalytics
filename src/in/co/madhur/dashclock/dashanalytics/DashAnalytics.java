@@ -63,11 +63,19 @@ public class DashAnalytics extends DashClockExtension
 		periodKey = appPreferences.getMetadata(Keys.PERIOD_ID);
 
 		metrics.clear();
+		int count=1;
 		metrics.add(metricKey);
 		for (ANALYTICS_KEYS key : ANALYTICS_KEYS.values())
 		{
 			if (appPreferences.getAnalyticProperty(key))
 			{
+				count++;
+				if(count > 9)
+				{
+					// Analytics API cannot handle more than 10 metrics
+					Log.d(App.TAG, "Limiting to 9 metrics");
+					break;
+				}
 				metrics.add(key.getMetric());
 
 			}

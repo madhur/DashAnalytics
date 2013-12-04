@@ -24,80 +24,87 @@
             android:key="analytics_click_intent"
             android:title="@string/click_behave_title" />
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_analytics_showprofile"
-            android:summary="@string/pref_analytics_showprofile_desc"
-            android:title="@string/pref_analytics_showprofile" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_analytics_showlastupdate"
-            android:summary="@string/pref_showlastupdate_desc"
-            android:title="@string/pref_showlastupdate" />
         <!-- <CheckBoxPreference android:title="@string/pref_disp_lastupdatetime" android:summary="@string/pref_disp_lastupdatetime_desc" android:key="pref_disp_lastupdatetime" android:defaultValue="false"/> -->
     </PreferenceCategory>
-
-    <PreferenceScreen
+    
+    
+    <PreferenceCategory
         android:summary="Select additional attributes to display"
         android:title="Select additional attributes to display" >
-        <PreferenceCategory android:title="Visitor Metrics" >
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showvisitors"
-                android:summary="@string/pref_showvisitors_desc"
-                android:title="@string/pref_showvisitors" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_shownewVisits"
-                android:summary="@string/pref_shownewVisits_desc"
-                android:title="@string/pref_shownewVisits" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showpercentNewVisits"
-                android:summary="@string/pref_showpercentNewVisits_desc"
-                android:title="@string/pref_showpercentNewVisits" />
-        </PreferenceCategory>
-        <PreferenceCategory android:title="Session Metrics" >
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showvisits"
-                android:summary="@string/pref_showvisits_desc"
-                android:title="@string/pref_showvisits" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showvisitBounceRate"
-                android:summary="@string/pref_showvisitBounceRate_desc"
-                android:title="@string/pref_showvisitBounceRate" />
-        </PreferenceCategory>
-        <PreferenceCategory android:title="Page Tracking" >
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showpageviews"
-                android:summary="@string/pref_showpageviews_desc"
-                android:title="@string/pref_showpageviews" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showpageviewsPerVisit"
-                android:summary="@string/pref_showpageviewsPerVisit_desc"
-                android:title="@string/pref_showpageviewsPerVisit" />
-        </PreferenceCategory>
-        <PreferenceCategory android:title="App Tracking" >
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showscreenviews"
-                android:summary="@string/pref_showscreenviews_desc"
-                android:title="@string/pref_showscreenviews" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showuniqueScreenviews"
-                android:summary="@string/pref_showuniqueScreenviews_desc"
-                android:title="@string/pref_showuniqueScreenviews" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_showscreenviewsPerSession"
-                android:summary="@string/pref_showscreenviewsPerSession_desc"
-                android:title="@string/pref_showscreenviewsPerSession" />
-        </PreferenceCategory>
-    </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="Select additional attributes to display"
+            android:title="Select additional attributes to display" >
+            <PreferenceCategory android:title="Core Settings" >
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_analytics_showprofile"
+                    android:summary="@string/pref_analytics_showprofile_desc"
+                    android:title="@string/pref_analytics_showprofile" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_analytics_showlastupdate"
+                    android:summary="@string/pref_showlastupdate_desc"
+                    android:title="@string/pref_showlastupdate" />
+            </PreferenceCategory>
+            <PreferenceCategory android:title="Visitor Metrics" >
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showvisitors"
+                    android:summary="@string/pref_showvisitors_desc"
+                    android:title="@string/pref_showvisitors" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_shownewVisits"
+                    android:summary="@string/pref_shownewVisits_desc"
+                    android:title="@string/pref_shownewVisits" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showpercentNewVisits"
+                    android:summary="@string/pref_showpercentNewVisits_desc"
+                    android:title="@string/pref_showpercentNewVisits" />
+            </PreferenceCategory>
+            <PreferenceCategory android:title="Session Metrics" >
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showvisits"
+                    android:summary="@string/pref_showvisits_desc"
+                    android:title="@string/pref_showvisits" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showvisitBounceRate"
+                    android:summary="@string/pref_showvisitBounceRate_desc"
+                    android:title="@string/pref_showvisitBounceRate" />
+            </PreferenceCategory>
+            <PreferenceCategory android:title="Page Tracking" >
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showpageviews"
+                    android:summary="@string/pref_showpageviews_desc"
+                    android:title="@string/pref_showpageviews" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showpageviewsPerVisit"
+                    android:summary="@string/pref_showpageviewsPerVisit_desc"
+                    android:title="@string/pref_showpageviewsPerVisit" />
+            </PreferenceCategory>
+            <PreferenceCategory android:title="App Tracking" >
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showscreenviews"
+                    android:summary="@string/pref_showscreenviews_desc"
+                    android:title="@string/pref_showscreenviews" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showuniqueScreenviews"
+                    android:summary="@string/pref_showuniqueScreenviews_desc"
+                    android:title="@string/pref_showuniqueScreenviews" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_showscreenviewsPerSession"
+                    android:summary="@string/pref_showscreenviewsPerSession_desc"
+                    android:title="@string/pref_showscreenviewsPerSession" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -76,14 +76,22 @@ public class DisplayAttribute
 				case METRIC_TALLY:
 					return NumberFormat.getNumberInstance().format(Double.parseDouble(value));
 					
+				case FLOAT:
+					NumberFormat n = NumberFormat.getNumberInstance();
+					n.setMinimumFractionDigits(2);
+					n.setMaximumFractionDigits(2);
+					return n.format(Double.parseDouble(value));
+					
 				case METRIC_RATIO:
 					NumberFormat ni = NumberFormat.getPercentInstance();
-					ni.setMinimumFractionDigits(2);
+					//ni.setMinimumFractionDigits(2);
+					ni.setMaximumFractionDigits(2);
 					return ni.format(Double.parseDouble(value));
 					
 				case PERCENT:
 					NumberFormat nii = NumberFormat.getPercentInstance();
-					nii.setMinimumFractionDigits(2);
+					//nii.setMinimumFractionDigits(2);
+					nii.setMaximumFractionDigits(2);
 					return nii.format(Double.parseDouble(value)/100);
 
 				default:

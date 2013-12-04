@@ -1,7 +1,5 @@
 package in.co.madhur.dashclock;
 
-import android.util.Log;
-
 public class Consts
 {
 
@@ -11,7 +9,7 @@ public class Consts
 
 	public enum ATTRIBUTE_TYPE
 	{
-		INTEGER, PERCENT, METRIC_RATIO, METRIC_CURRENCY, METRIC_TALLY
+		INTEGER, PERCENT, METRIC_RATIO, METRIC_CURRENCY, METRIC_TALLY, FLOAT
 
 	};
 

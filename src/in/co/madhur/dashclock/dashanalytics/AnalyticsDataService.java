@@ -32,7 +32,6 @@ public class AnalyticsDataService extends DataService
 	
 	public void showAccountsAsync()
 	{
-
 		new APIManagementTask().execute(APIOperation.SELECT_ACCOUNT);
 	}
 	
@@ -50,7 +49,6 @@ public class AnalyticsDataService extends DataService
 			String WebpropertyId;
 			String Id, accountName, propertyName, profileName;
 
-			// ListMultimap<GProperty, GProfile> propertiesMap = ArrayListMultimap.create();
 			List<GAccount> gAccounts = new ArrayList<GAccount>();
 
 			boolean isApp;
@@ -69,7 +67,6 @@ public class AnalyticsDataService extends DataService
 				if (size < 1)
 				{
 					getString(R.string.no_analytics_account);
-					Log.v(App.TAG, String.valueOf(size));
 				}
 
 				try
@@ -84,7 +81,6 @@ public class AnalyticsDataService extends DataService
 
 					try
 					{
-						Log.v(App.TAG, e.getMessage().substring(e.getMessage().indexOf("{")));
 						JSONObject json = new JSONObject(new JSONTokener(e.getMessage().substring(e.getMessage().indexOf("{"))));
 						JSONObject error = json.getJSONArray("errors").getJSONObject(0);
 						message = error.getString("message");
@@ -151,7 +147,7 @@ public class AnalyticsDataService extends DataService
 								if (App.LOCAL_LOGV)
 								{
 									Log.d(App.TAG, "profile_id: " + Profile_Id);
-									Log.d(App.TAG, "profile_id: "
+									Log.d(App.TAG, "profile_name: "
 											+ profiles.getItems().get(k).getName());
 								}
 
@@ -160,7 +156,6 @@ public class AnalyticsDataService extends DataService
 								gAccounts.get(i).getProperties().get(j).getProfiles().add(gProfile);
 
 								acProfiles.add(new GNewProfile(Id, accountName, WebpropertyId, propertyName, Profile_Id, profileName, isApp));
-								// propertiesMap.put(gProperty, gProfile);
 
 							}
 						}
