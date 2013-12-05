@@ -249,7 +249,7 @@ public class DashAnalytics extends DashClockExtension
 
 			if (showProfile)
 			{
-				expandedBody.append(String.format(getString(R.string.body_display_format), profileName, selectedProperty));
+				expandedBody.append(String.format(getString(R.string.profile_display_format), profileName, selectedProperty));
 				expandedBody.append("\n");
 			}
 			if (showLastUpdate)

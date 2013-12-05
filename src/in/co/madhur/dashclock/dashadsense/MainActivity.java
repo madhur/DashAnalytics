@@ -1,8 +1,10 @@
 package in.co.madhur.dashclock.dashadsense;
 
+import in.co.madhur.dashclock.App;
 import in.co.madhur.dashclock.BaseActivity;
 import in.co.madhur.dashclock.MyBaseAdapter;
 import in.co.madhur.dashclock.R;
+import in.co.madhur.dashclock.API.AccountResult;
 import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.API.GProfile;
 import in.co.madhur.dashclock.AppPreferences.Keys;
@@ -10,17 +12,25 @@ import in.co.madhur.dashclock.AppPreferences.Keys;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.adsense.AdSense;
 import com.google.api.services.adsense.AdSenseScopes;
+import com.squareup.otto.Subscribe;
+
 import android.app.ActionBar.OnNavigationListener;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends BaseActivity
@@ -60,6 +70,9 @@ public class MainActivity extends BaseActivity
 		{
 			setNavigationList(appPreferences.getUserName());
 		}
+		
+		App.getAdSenseEventBus().register(this);
+		
 	}
 
 	
@@ -108,6 +121,21 @@ public class MainActivity extends BaseActivity
 		return adsense;
 	}
 
+	 @Override
+	protected void onResume()
+	{
+		// TODO Auto-generated method stub
+		super.onResume();
+		
+		
+	}
+	 
+	 @Override
+	protected void onPause()
+	{
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
 
 
 	@Override
@@ -131,6 +159,67 @@ public class MainActivity extends BaseActivity
 		Intent i=new Intent();
 		i.setClass(this, DashAdSensePreferenceActivity.class);
 		return i;
+	}
+	
+	@Subscribe
+	public void UpdateUI(AccountResult result)
+	{
+		ProgressBar progressbar = (ProgressBar) findViewById(R.id.pbHeaderProgress);
+		LinearLayout spinnerLayout = (LinearLayout) findViewById(R.id.spinnerslayout);
+		TextView statusMessage = (TextView) findViewById(R.id.statusMessage);
+
+		switch (result.getStatus())
+		{
+			case STARTING:
+				statusMessage.setVisibility(View.GONE);
+				progressbar.setVisibility(View.VISIBLE);
+				spinnerLayout.setVisibility(View.GONE);
+
+				break;
+
+			case FAILURE:
+				statusMessage.setVisibility(View.VISIBLE);
+				progressbar.setVisibility(View.GONE);
+				spinnerLayout.setVisibility(View.GONE);
+				statusMessage.setText(result.getErrorMessage());
+
+				break;
+
+			case SUCCESS:
+
+				statusMessage.setVisibility(View.GONE);
+				progressbar.setVisibility(View.GONE);
+				spinnerLayout.setVisibility(View.VISIBLE);
+
+				if (result.getItems() != null)
+				{
+					this.acProfiles = result.getItems();
+
+					MyBaseAdapter myAdapter = getListAdater(acProfiles, this);
+					listView.setAdapter(myAdapter);
+
+					UpdateSelectionPreferences();
+
+					if (result.isPersist() && acProfiles.size() > 0)
+					{
+						if (App.LOCAL_LOGV)
+							Log.v(App.TAG_BASE, "saving configdata");
+
+						try
+						{
+							appPreferences.saveConfigData(acProfiles, credential.getSelectedAccountName());
+						}
+						catch (JsonProcessingException e)
+						{
+							Log.e(App.TAG, e.getMessage());
+						}
+					}
+
+				}
+
+				break;
+		}
+
 	}
 
 }

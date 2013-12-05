@@ -1,5 +1,7 @@
 package in.co.madhur.dashclock;
 
+import com.squareup.otto.Bus;
+
 import in.co.madhur.dashclock.API.AccountResult;
 import in.co.madhur.dashclock.Consts.APIOperation;
 import in.co.madhur.dashclock.Consts.API_STATUS;
@@ -42,7 +44,7 @@ public abstract class DataService extends Service
 		{
 			super.onPreExecute();
 
-			App.getEventBus().post(new AccountResult(API_STATUS.STARTING));
+			getEventBus().post(new AccountResult(API_STATUS.STARTING));
 
 		}
 
@@ -52,7 +54,7 @@ public abstract class DataService extends Service
 			super.onPostExecute(result);
 
 			if(result!=null)
-				App.getEventBus().post(result);
+				getEventBus().post(result);
 
 		}
 		
@@ -67,6 +69,8 @@ public abstract class DataService extends Service
     {
             return binder;
     }
+
+	public abstract Bus getEventBus();
 
 	public class LocalBinder extends Binder
 	{

@@ -19,7 +19,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 {
 	protected AppPreferences appPreferences;
 	
-	OnSharedPreferenceChangeListener listener=new OnSharedPreferenceChangeListener()
+	protected OnSharedPreferenceChangeListener listener=new OnSharedPreferenceChangeListener()
 	{
 		
 		@Override
@@ -71,7 +71,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 		SetListeners();
 		
 		EnableDisablePreferences();
-		this.appPreferences.sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+		
 
 	}
 

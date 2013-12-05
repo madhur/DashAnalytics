@@ -51,7 +51,6 @@ public abstract class BaseActivity extends Activity
 	protected boolean mBound = false;
 	protected static final int REQUEST_AUTHORIZATION = 2;
 	protected ArrayList<GNewProfile> acProfiles;
-	protected UpdateUIClass UpdateUI=new UpdateUIClass();
 
 	protected ServiceConnection mConnection = new ServiceConnection()
 	{
@@ -113,7 +112,7 @@ public abstract class BaseActivity extends Activity
 			}
 			else
 			{
-				UpdateUI.UpdateUI(new AccountResult( getString(R.string.network_not_connected)));
+				UpdateUI(new AccountResult( getString(R.string.network_not_connected)));
 			}
 		}
 		else
@@ -122,12 +121,14 @@ public abstract class BaseActivity extends Activity
 				Log.v(App.TAG_BASE, "Initing accounts from cache for "
 						+ selectedAccount);
 
-			UpdateUI.UpdateUI(new AccountResult(acProfiles, false));
+			UpdateUI(new AccountResult(acProfiles, false));
 			UpdateSelectionPreferences();
 		}
 
 	}
 
+	protected abstract void UpdateUI(AccountResult accountResult);
+	
 	protected abstract void UpdateSelectionPreferences();
 
 	@Override
@@ -169,7 +170,7 @@ public abstract class BaseActivity extends Activity
 			}
 		});
 
-		App.getEventBus().register(UpdateUI);
+//		App.getEventBus().register(UpdateUI);
 
 	}
 
@@ -394,72 +395,6 @@ public abstract class BaseActivity extends Activity
 			unbindService(mConnection);
 			mBound = false;
 		}
-	}
-
-	private class UpdateUIClass
-	{
-
-		@Subscribe
-		public void UpdateUI(AccountResult result)
-		{
-			ProgressBar progressbar = (ProgressBar) findViewById(R.id.pbHeaderProgress);
-			LinearLayout spinnerLayout = (LinearLayout) findViewById(R.id.spinnerslayout);
-			TextView statusMessage = (TextView) findViewById(R.id.statusMessage);
-
-			switch (result.getStatus())
-			{
-				case STARTING:
-					statusMessage.setVisibility(View.GONE);
-					progressbar.setVisibility(View.VISIBLE);
-					spinnerLayout.setVisibility(View.GONE);
-
-					break;
-
-				case FAILURE:
-					statusMessage.setVisibility(View.VISIBLE);
-					progressbar.setVisibility(View.GONE);
-					spinnerLayout.setVisibility(View.GONE);
-					statusMessage.setText(result.getErrorMessage());
-
-					break;
-
-				case SUCCESS:
-
-					statusMessage.setVisibility(View.GONE);
-					progressbar.setVisibility(View.GONE);
-					spinnerLayout.setVisibility(View.VISIBLE);
-
-					if (result.getItems() != null)
-					{
-						BaseActivity.this.acProfiles = result.getItems();
-
-						MyBaseAdapter myAdapter = getListAdater(acProfiles, BaseActivity.this);
-						listView.setAdapter(myAdapter);
-
-						UpdateSelectionPreferences();
-
-						if (result.isPersist() && acProfiles.size() > 0)
-						{
-							if (App.LOCAL_LOGV)
-								Log.v(App.TAG_BASE, "saving configdata");
-
-							try
-							{
-								appPreferences.saveConfigData(acProfiles, credential.getSelectedAccountName());
-							}
-							catch (JsonProcessingException e)
-							{
-								Log.e(App.TAG, e.getMessage());
-							}
-						}
-
-					}
-
-					break;
-			}
-
-		}
-
 	}
 
 }

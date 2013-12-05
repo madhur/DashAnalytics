@@ -21,6 +21,7 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.model.Accounts;
 import com.google.api.services.analytics.model.Profiles;
+import com.squareup.otto.Bus;
 //import com.google.common.collect.ArrayListMultimap;
 //import com.google.common.collect.ListMultimap;
 
@@ -178,6 +179,12 @@ public class AnalyticsDataService extends DataService
 
 		}
 
+	}
+
+	@Override
+	public Bus getEventBus()
+	{
+		return App.getAnalyticsEventBus();
 	}
 
 	

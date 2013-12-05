@@ -16,6 +16,8 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.adsense.AdSense;
 import com.google.api.services.adsense.model.Account;
 import com.google.api.services.adsense.model.Accounts;
+import com.squareup.otto.Bus;
+
 import android.util.Log;
 
 public class AdsenseDataService extends DataService
@@ -114,6 +116,12 @@ public class AdsenseDataService extends DataService
 
 		}
 
+	}
+
+	@Override
+	public Bus getEventBus()
+	{
+		return App.getAdSenseEventBus();
 	}
 
 }

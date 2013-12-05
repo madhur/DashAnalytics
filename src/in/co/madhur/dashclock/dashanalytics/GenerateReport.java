@@ -110,8 +110,8 @@ public class GenerateReport
 	 *            the parameter to be escaped.
 	 * @return the escaped parameter.
 	 */
-	public static String escapeFilterParameter(String parameter)
-	{
-		return parameter.replace("\\", "\\\\").replace(",", "\\,");
-	}
+//	public static String escapeFilterParameter(String parameter)
+//	{
+//		return parameter.replace("\\", "\\\\").replace(",", "\\,");
+//	}
 }
