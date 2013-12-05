@@ -8,6 +8,7 @@ import in.co.madhur.dashclock.AppPreferences.Keys;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
@@ -105,5 +106,12 @@ public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 		
 		
 	}
+	
+	@Override
+	protected Drawable getIcon()
+	{
+		return this.getResources().getDrawable(R.drawable.ic_dashanalytics);
+	}
+
 
 }

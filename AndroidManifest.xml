@@ -23,7 +23,7 @@
 
         <activity
             android:name=".dashanalytics.MainActivity"
-            android:exported="true"
+            android:exported="true" android:logo="@drawable/ic_dashanalytics"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,9 +40,9 @@
                 
             </intent-filter>
         </activity>
-        <activity android:name=".dashanalytics.DashAnalyticsPreferenceActivity" >
+        <activity android:name=".dashanalytics.DashAnalyticsPreferenceActivity" android:icon="@drawable/ic_dashanalytics" android:logo="@drawable/ic_dashanalytics" >
         </activity>
-        <activity android:name=".dashadsense.DashAdSensePreferenceActivity" android:logo="@drawable/ic_dashadsense"  >
+        <activity android:name=".dashadsense.DashAdSensePreferenceActivity" android:logo="@drawable/ic_dashadsense"  android:icon="@drawable/ic_dashadsense" >
         </activity>
 
         <service
