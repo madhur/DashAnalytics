@@ -1,5 +1,7 @@
 package in.co.madhur.dashclock.dashadsense;
 
+import java.util.ArrayList;
+
 import in.co.madhur.dashclock.AppPreferences.ADSENSE_KEYS;
 import in.co.madhur.dashclock.BasePreferenceActivity;
 import in.co.madhur.dashclock.Consts;
@@ -19,18 +21,16 @@ public class DashAdSensePreferenceActivity extends BasePreferenceActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
-		
+
 		PreferenceManager prefMgr = getPreferenceManager();
-        prefMgr.setSharedPreferencesName(Consts.ADSENSE_PREFERENCE_NAME);
-        prefMgr.setSharedPreferencesMode(Context.MODE_PRIVATE);
-        
+		prefMgr.setSharedPreferencesName(Consts.ADSENSE_PREFERENCE_NAME);
+		prefMgr.setSharedPreferencesMode(Context.MODE_PRIVATE);
+
 		appPreferences = new AdSensePreferences(this);
 		addPreferencesFromResource(R.xml.adsense_preference);
 
-
-		UpdateLabel((ListPreference) findPreference(Keys.ADSENSE_PERIOD_ID.key), null);
 		
+
 		this.appPreferences.sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
 	}
 
@@ -39,9 +39,20 @@ public class DashAdSensePreferenceActivity extends BasePreferenceActivity
 	{
 		super.onResume();
 		
-	
-	}
+		UpdateLabel((ListPreference) findPreference(Keys.ADSENSE_PERIOD_ID.key), null);
 
+		prefKeys.clear();
+		for (ADSENSE_KEYS key : ADSENSE_KEYS.values())
+		{
+
+			prefKeys.add(key.key);
+		}
+
+		prefKeys.add(Keys.SHOW_ADSENSE_LASTUPDATE.key);
+
+		EnableDisablePreferences(true);
+
+	}
 
 	@Override
 	protected void SetListeners()
@@ -52,67 +63,17 @@ public class DashAdSensePreferenceActivity extends BasePreferenceActivity
 
 	}
 
-	
-	@Override
-	protected void EnableDisablePreferences(boolean loading)
-	{
-		
-		
-		int count = 0;
-		if(appPreferences.getboolMetaData(Keys.SHOW_ADSENSE_LASTUPDATE) )
-			count++;
-		
-		for (ADSENSE_KEYS key2 : ADSENSE_KEYS.values())
-		{
-			if (appPreferences.getAdsenseProperty(key2))
-			{
-				count++;
-
-			}
-		}
-
-		if (count > 4)
-		{
-			if(!loading)
-				Toast.makeText(getBaseContext(), getString(R.string.max_attributes_message), Toast.LENGTH_LONG).show();
-			
-			for (ADSENSE_KEYS key2: ADSENSE_KEYS.values())
-			{
-				if (!appPreferences.getAdsenseProperty(key2))
-				{
-					findPreference(key2.key).setEnabled(false);
-
-				}
-				
-			}
-			
-			if(!appPreferences.getboolMetaData(Keys.SHOW_ADSENSE_LASTUPDATE))
-				findPreference(Keys.SHOW_ADSENSE_LASTUPDATE.key).setEnabled(false);
-			
-
-		}
-		else
-		{
-			for (ADSENSE_KEYS key2 : ADSENSE_KEYS.values())
-			{
-				if (!appPreferences.getAdsenseProperty(key2))
-				{
-					findPreference(key2.key).setEnabled(true);
-
-				}
-				
-			}
-			
-			findPreference(Keys.SHOW_ADSENSE_LASTUPDATE.key).setEnabled(true);
-			
-		}
-
-	}
-
 	@Override
 	protected Drawable getIcon()
 	{
 		return this.getResources().getDrawable(R.drawable.ic_dashadsense);
+	}
+
+	@Override
+	protected void EnableDisablePreferences(boolean loading)
+	{
+		EnableDisablePreferences(loading, 4);
+
 	}
 
 }

@@ -3,6 +3,7 @@ package in.co.madhur.dashclock.dashanalytics;
 import in.co.madhur.dashclock.BasePreferenceActivity;
 import in.co.madhur.dashclock.Consts;
 import in.co.madhur.dashclock.R;
+import in.co.madhur.dashclock.AppPreferences.ADSENSE_KEYS;
 import in.co.madhur.dashclock.AppPreferences.ANALYTICS_KEYS;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import android.content.Context;
@@ -21,61 +22,7 @@ public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 	protected void EnableDisablePreferences(boolean loading)
 	{
 
-		int count = 0;
-		if (appPreferences.getboolMetaData(Keys.SHOW_ANALYTICS_LASTUPDATE))
-			count++;
-
-		if (appPreferences.getboolMetaData(Keys.SHOW_PROFILE))
-			count++;
-
-		for (ANALYTICS_KEYS key2 : ANALYTICS_KEYS.values())
-		{
-			if (appPreferences.getAnalyticProperty(key2))
-			{
-				count++;
-
-			}
-		}
-
-		if (count > 4)
-		{
-			if(!loading)
-				Toast.makeText(getBaseContext(), getString(R.string.max_attributes_message), Toast.LENGTH_LONG).show();
-			
-			for (ANALYTICS_KEYS key2 : ANALYTICS_KEYS.values())
-			{
-				if (!appPreferences.getAnalyticProperty(key2))
-				{
-					findPreference(key2.key).setEnabled(false);
-
-				}
-
-			}
-
-			if (!appPreferences.getboolMetaData(Keys.SHOW_PROFILE))
-				findPreference(Keys.SHOW_PROFILE.key).setEnabled(false);
-
-			if (!appPreferences.getboolMetaData(Keys.SHOW_ANALYTICS_LASTUPDATE))
-				findPreference(Keys.SHOW_ANALYTICS_LASTUPDATE.key).setEnabled(false);
-
-		}
-		else
-		{
-			for (ANALYTICS_KEYS key2 : ANALYTICS_KEYS.values())
-			{
-				if (!appPreferences.getAnalyticProperty(key2))
-				{
-					findPreference(key2.key).setEnabled(true);
-
-				}
-
-			}
-
-			findPreference(Keys.SHOW_PROFILE.key).setEnabled(true);
-
-			findPreference(Keys.SHOW_ANALYTICS_LASTUPDATE.key).setEnabled(true);
-
-		}
+		EnableDisablePreferences(loading, 4);
 
 	}
 
@@ -102,6 +49,18 @@ public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 
 		UpdateLabel((ListPreference) findPreference(Keys.METRIC_ID.key), null);
 		UpdateLabel((ListPreference) findPreference(Keys.PERIOD_ID.key), null);
+
+		prefKeys.clear();
+		for (ANALYTICS_KEYS key : ANALYTICS_KEYS.values())
+		{
+
+			prefKeys.add(key.key);
+		}
+
+		prefKeys.add(Keys.SHOW_PROFILE.key);
+		prefKeys.add(Keys.SHOW_ANALYTICS_LASTUPDATE.key);
+
+		EnableDisablePreferences(true);
 
 	}
 

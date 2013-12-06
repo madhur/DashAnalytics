@@ -1,5 +1,7 @@
 package in.co.madhur.dashclock;
 
+import java.util.ArrayList;
+
 import com.google.android.apps.dashclock.configuration.AppChooserPreference;
 
 import in.co.madhur.dashclock.AppPreferences;
@@ -24,10 +26,12 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public abstract class BasePreferenceActivity extends PreferenceActivity
 {
 	protected AppPreferences appPreferences;
+	protected ArrayList<String> prefKeys=new ArrayList<String>();
 
 	protected OnSharedPreferenceChangeListener listener = new OnSharedPreferenceChangeListener()
 	{
@@ -35,7 +39,8 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 		{
-			EnableDisablePreferences(false);
+			if(prefKeys.contains(key))
+				EnableDisablePreferences(false);
 
 		}
 	};
@@ -80,7 +85,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 
 		SetListeners();
 
-		EnableDisablePreferences(true);
+		
 
 	}
 
@@ -114,6 +119,42 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 
 		return false;
 	}
+	
+	protected void EnableDisablePreferences(boolean loading, int maxCount)
+	{
+		
+		int count = 0;
+		
+		for(String key: prefKeys)
+		{
+			if(appPreferences.getboolMetaDataStr(key))
+				count++;
+			
+		}
+		
+		if (count > maxCount)
+		{
+			if(!loading)
+				Toast.makeText(getBaseContext(), getString(R.string.max_attributes_message), Toast.LENGTH_LONG).show();
+			
+			for(String key: prefKeys)
+			{
+				if(!appPreferences.getboolMetaDataStr(key))
+					findPreference(key).setEnabled(false);
+				
+			}
+		}
+		else
+		{
+			for(String key: prefKeys)
+			{
+					findPreference(key).setEnabled(true);
+				
+			}
+			
+		}
+	}
+		
 
 	// ** Sets up the action bar for an {@link PreferenceScreen} */
 	public  void initializeActionBar(PreferenceScreen preferenceScreen)

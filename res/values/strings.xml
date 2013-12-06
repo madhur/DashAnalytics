@@ -15,20 +15,20 @@
     <string name="last30days">Last 30 days</string>
     <string name="lastweek">Last Week</string>
     <string name="ga_visits">Visits</string>
-    <string name="ga_visitors">Visitors</string>
+    <string name="ga_visitors">Unique Visitors</string>
     <string name="ga_newVisits">New visits</string>
-    <string name="ga_percentNewVisits">Percentage New Visits</string>
+    <string name="ga_percentNewVisits">% New Visits</string>
     
     <string name="ga_screenviews">Screen Views</string>
     <string name="ga_uniqueScreenviews">Unique Screen Views</string>
-    <string name="ga_screenviewsPerSession">Screen Views Per Session</string>
+    <string name="ga_screenviewsPerSession">Screen Views / Session</string>
     <string name="ga_timeOnScreen">Time on Screen</string>
     <string name="ga_avgScreenviewDuration">Average Screen View Duration</string>
     
     <string name="ga_pageviews">Page Views</string>
         
     <string name="ga_visitBounceRate">Bounce Rate</string>
-    <string name="ga_pageviewsPerVisit">Page Views Per Visit</string>
+    <string name="ga_pageviewsPerVisit">Page Views / Visit</string>
         
     
     <string name="gps_missing">Your phone seems to be missing Google Play Services. If it\'s a custom ROM make sure you have installed GApps package</string>

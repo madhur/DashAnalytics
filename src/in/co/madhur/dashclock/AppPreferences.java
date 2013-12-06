@@ -172,6 +172,14 @@ public abstract class AppPreferences
 		return sharedPreferences.getBoolean(key.key, defValue);
 	}
 	
+	public boolean getboolMetaDataStr(String key)
+	{
+		boolean defValue=false;
+		
+		return sharedPreferences.getBoolean(key, defValue);
+	}
+	
+	
 	public boolean getAnalyticProperty(ANALYTICS_KEYS key)
 	{
 		boolean defValue=false;
