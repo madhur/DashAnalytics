@@ -294,6 +294,8 @@ public abstract class BaseActivity extends Activity
 			case REQUEST_AUTHORIZATION:
 				if (resultCode == Activity.RESULT_OK)
 				{
+					setNavigationList(null);
+					setService();
 					getAccounts();
 				}
 				else

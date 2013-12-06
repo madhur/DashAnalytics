@@ -202,11 +202,29 @@ public class DashAdsense extends DashClockExtension
 			else
 			{
 				Log.d(App.TAG_ADSENSE, "rows are null");
+				
+				for (int i = 0; i < headers.size(); ++i)
+				{
+					if (headers.get(i).getCurrency() != null)
+					{
+						currency = headers.get(i).getCurrency();
+
+					}
+					values.put(headers.get(i).getName().replace(':', '_'), new DisplayAttribute("0", headers.get(i).getType()));
+				}
+				
 				// TODO: See if its ok to publish all metrics as zero
-				publishUpdate(null);
+				// publishUpdate(null);
 				// If no rows are returned, either do not publish update or
 				// publish null update to clear existing data
+				// return;
+			}
+			
+			if(values.size()==0)
+			{
+				Log.d(App.TAG, "No data returned");
 				return;
+				
 			}
 
 			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAdsense.this.getPackageName());
@@ -225,7 +243,7 @@ public class DashAdsense extends DashClockExtension
 				int stringIdentifier = getResources().getIdentifier(header, "string", DashAdsense.this.getPackageName());
 				DisplayAttribute dispValue = values.get(header);
 				if (dispValue.getType() == ATTRIBUTE_TYPE.METRIC_CURRENCY
-						&& showCurrency)
+						&& showCurrency && !TextUtils.isEmpty(currency))
 					lineString = String.format(getString(R.string.adsense_attribute_display_format_withcurrency), getString(stringIdentifier), Currency.getInstance(currency).getSymbol(), values.get(header));
 				else
 					lineString = String.format(getString(R.string.adsense_attribute_display_format), getString(stringIdentifier), values.get(header));

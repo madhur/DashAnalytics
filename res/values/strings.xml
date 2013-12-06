@@ -59,7 +59,7 @@
     <string name="pref_adsense_usetimezonee">Use Time zone reporting</string>
     <string name="pref_adsense_usetimezonee_desc">Whether the earnings should be displayed in the AdSense account\'s local timezone. If false default PST timezone will be used</string>
 	<string name="pref_showcurrency">Show currency</string>
-	<string name="pref_showcurrency_desc">Show currency</string>
+	<string name="pref_showcurrency_desc">Show currency symbol against currencies</string>
 	<string name="pref_attributes">Select additional attributes to display</string>
 	
 	<string name="pref_showpageviews">Page Views</string>

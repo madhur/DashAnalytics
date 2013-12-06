@@ -194,7 +194,7 @@ public class DashAnalytics extends DashClockExtension
 					{
 						result = "0";
 						Log.d(App.TAG, "empty result");
-
+						return;
 						// TODO: Check if its ok to publish zero metric
 
 					}
@@ -203,8 +203,16 @@ public class DashAnalytics extends DashClockExtension
 				{
 					result = "0";
 					Log.d(App.TAG, "null rows");
-
+					
+					for (int i = 0; i < columnHeaders.size(); ++i)
+					{
+						values.put(columnHeaders.get(i).getName().replace(':', '_'), new DisplayAttribute("0", columnHeaders.get(i).getDataType()));
+					}
+					
+					
+					//return;
 					// TODO: Check if its ok to publish zero metric
+					// This is the condition at 12 AM
 
 				}
 			}
@@ -215,6 +223,13 @@ public class DashAnalytics extends DashClockExtension
 				// TODO: Check if its ok to publish zero metric
 				publishUpdate(null);
 				return;
+			}
+			
+			if(values.size()==0)
+			{
+				Log.d(App.TAG, "No data returned");
+				return;
+				
 			}
 
 			StringBuilder expandedBody = new StringBuilder();
