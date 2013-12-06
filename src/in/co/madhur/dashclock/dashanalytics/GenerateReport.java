@@ -49,24 +49,34 @@ public class GenerateReport
 		}
 		else if (periodKey.equalsIgnoreCase(APIPeriod.LASTWEEK.toString()))
 		{
-			startDate = "startOfMonth";
-			endDate = "today";
+			int i = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
+			calendar.add(Calendar.DATE, -i - 7);
+			startDate = DATE_FORMATTER.format(calendar.getTime());
+			calendar.add(Calendar.DATE, 6);
+		    endDate = DATE_FORMATTER.format(calendar.getTime());
 
 		}
-		else if (periodKey.equalsIgnoreCase(APIPeriod.LAST30DAYS.toString()))
+		else if (periodKey.equalsIgnoreCase(APIPeriod.LASTMONTH.toString()))
 		{
 			calendar.add(Calendar.MONTH, -1);
 			calendar.set(Calendar.DATE, 1);
-			startDate = DATE_FORMATTER.format(calendar.getTime());
+			startDate =  DATE_FORMATTER.format(calendar.getTime());
 
-			calendar.add(Calendar.MONTH, 1);
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			calendar.add(Calendar.DATE, -1);
+			calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE)); // changed calendar to cal
 
 			endDate = DATE_FORMATTER.format(calendar.getTime());
 
 		}
+		else if (periodKey.equalsIgnoreCase(APIPeriod.LAST30DAYS.toString()))
+		{
+			calendar.add(Calendar.DAY_OF_MONTH, -30);
+			startDate = DATE_FORMATTER.format(calendar.getTime());
+			endDate = "today";
 
+		}
+		
+		
+		
 		StringBuilder metricsBuilder = new StringBuilder();
 
 		for (String metric : metrics)
@@ -83,8 +93,9 @@ public class GenerateReport
 
 		try
 		{
-			Log.d(App.TAG, metricsBuilder.substring(0, metricsBuilder.length() - 1));
-			Get apiQuery = analytics.data().ga().get("ga:" + ProfileId, startDate, endDate, metricsBuilder.substring(0, metricsBuilder.length() - 1).replace('_', ':'));
+			String metricsStr=metricsBuilder.substring(0, metricsBuilder.length() - 1).replace('_', ':');
+			Log.d(App.TAG, metricsStr);
+			Get apiQuery = analytics.data().ga().get("ga:" + ProfileId, startDate, endDate, metricsStr );
 			Log.d(App.TAG, apiQuery.toString());
 
 			return new AnalyticsAPIResult(apiQuery.execute());

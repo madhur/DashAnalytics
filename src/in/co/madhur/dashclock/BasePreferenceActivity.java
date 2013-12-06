@@ -35,7 +35,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 		{
-			EnableDisablePreferences();
+			EnableDisablePreferences(false);
 
 		}
 	};
@@ -59,7 +59,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
-	protected abstract void EnableDisablePreferences();
+	protected abstract void EnableDisablePreferences(boolean loading);
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -80,7 +80,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 
 		SetListeners();
 
-		EnableDisablePreferences();
+		EnableDisablePreferences(true);
 
 	}
 

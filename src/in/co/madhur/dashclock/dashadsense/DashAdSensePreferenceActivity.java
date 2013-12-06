@@ -52,8 +52,9 @@ public class DashAdSensePreferenceActivity extends BasePreferenceActivity
 
 	}
 
+	
 	@Override
-	protected void EnableDisablePreferences()
+	protected void EnableDisablePreferences(boolean loading)
 	{
 		
 		
@@ -72,7 +73,9 @@ public class DashAdSensePreferenceActivity extends BasePreferenceActivity
 
 		if (count > 4)
 		{
-			Toast.makeText(getBaseContext(), "Upto 5 Additional attributes can be displayed", Toast.LENGTH_LONG).show();
+			if(!loading)
+				Toast.makeText(getBaseContext(), getString(R.string.max_attributes_message), Toast.LENGTH_LONG).show();
+			
 			for (ADSENSE_KEYS key2: ADSENSE_KEYS.values())
 			{
 				if (!appPreferences.getAdsenseProperty(key2))

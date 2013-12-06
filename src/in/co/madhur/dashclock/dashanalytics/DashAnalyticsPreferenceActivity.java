@@ -16,19 +16,18 @@ import android.widget.Toast;
 
 public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 {
-	
+
 	@Override
-	protected void EnableDisablePreferences()
+	protected void EnableDisablePreferences(boolean loading)
 	{
-		
-		
+
 		int count = 0;
-		if(appPreferences.getboolMetaData(Keys.SHOW_ANALYTICS_LASTUPDATE) )
+		if (appPreferences.getboolMetaData(Keys.SHOW_ANALYTICS_LASTUPDATE))
 			count++;
-		
-		if(appPreferences.getboolMetaData(Keys.SHOW_PROFILE))
+
+		if (appPreferences.getboolMetaData(Keys.SHOW_PROFILE))
 			count++;
-		
+
 		for (ANALYTICS_KEYS key2 : ANALYTICS_KEYS.values())
 		{
 			if (appPreferences.getAnalyticProperty(key2))
@@ -38,25 +37,26 @@ public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 			}
 		}
 
-		if (count >4)
+		if (count > 4)
 		{
-			Toast.makeText(getBaseContext(), "Upto 5 Additional attributes can be displayed", Toast.LENGTH_LONG).show();
-			for (ANALYTICS_KEYS key2: ANALYTICS_KEYS.values())
+			if(!loading)
+				Toast.makeText(getBaseContext(), getString(R.string.max_attributes_message), Toast.LENGTH_LONG).show();
+			
+			for (ANALYTICS_KEYS key2 : ANALYTICS_KEYS.values())
 			{
 				if (!appPreferences.getAnalyticProperty(key2))
 				{
 					findPreference(key2.key).setEnabled(false);
 
 				}
-				
+
 			}
-			
-			if(!appPreferences.getboolMetaData(Keys.SHOW_PROFILE))
+
+			if (!appPreferences.getboolMetaData(Keys.SHOW_PROFILE))
 				findPreference(Keys.SHOW_PROFILE.key).setEnabled(false);
-			
-			if(!appPreferences.getboolMetaData(Keys.SHOW_ANALYTICS_LASTUPDATE))
+
+			if (!appPreferences.getboolMetaData(Keys.SHOW_ANALYTICS_LASTUPDATE))
 				findPreference(Keys.SHOW_ANALYTICS_LASTUPDATE.key).setEnabled(false);
-			
 
 		}
 		else
@@ -68,31 +68,31 @@ public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 					findPreference(key2.key).setEnabled(true);
 
 				}
-				
+
 			}
-			
+
 			findPreference(Keys.SHOW_PROFILE.key).setEnabled(true);
-			
+
 			findPreference(Keys.SHOW_ANALYTICS_LASTUPDATE.key).setEnabled(true);
-			
+
 		}
 
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+
 		PreferenceManager prefMgr = getPreferenceManager();
-        prefMgr.setSharedPreferencesName(Consts.ANALYTICS_PREFERENCE_NAME);
-        prefMgr.setSharedPreferencesMode(Context.MODE_PRIVATE);
+		prefMgr.setSharedPreferencesName(Consts.ANALYTICS_PREFERENCE_NAME);
+		prefMgr.setSharedPreferencesMode(Context.MODE_PRIVATE);
 
 		appPreferences = new AnalyticsPreferences(this);
 		addPreferencesFromResource(R.xml.preference);
-		
+
 		this.appPreferences.sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
-		
+
 	}
 
 	@Override
@@ -102,16 +102,24 @@ public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 
 		UpdateLabel((ListPreference) findPreference(Keys.METRIC_ID.key), null);
 		UpdateLabel((ListPreference) findPreference(Keys.PERIOD_ID.key), null);
-		
-		
-		
+
 	}
-	
+
+	@Override
+	protected void SetListeners()
+	{
+		super.SetListeners();
+
+		findPreference(Keys.METRIC_ID.key).setOnPreferenceChangeListener(listPreferenceChangeListerner);
+
+		findPreference(Keys.PERIOD_ID.key).setOnPreferenceChangeListener(listPreferenceChangeListerner);
+
+	}
+
 	@Override
 	protected Drawable getIcon()
 	{
 		return this.getResources().getDrawable(R.drawable.ic_dashanalytics);
 	}
-
 
 }
