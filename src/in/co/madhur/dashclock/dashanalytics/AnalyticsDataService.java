@@ -9,6 +9,7 @@ import in.co.madhur.dashclock.API.GNewProfile;
 import in.co.madhur.dashclock.API.GProfile;
 import in.co.madhur.dashclock.API.GProperty;
 import in.co.madhur.dashclock.Consts.APIOperation;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.crittercism.app.Crittercism;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.analytics.Analytics;
@@ -95,7 +97,19 @@ public class AnalyticsDataService extends DataService
 					return new AccountResult(message);
 				}
 
-				account_num = accounts.getItems().size();
+				try
+				{
+					account_num = accounts.getItems().size();
+				}
+				catch (NullPointerException e)
+				{
+					// This exception occured for a user.
+					Log.e(App.TAG, e.getMessage());
+					Crittercism.logHandledException(e);
+					return new AccountResult("Could not retrieve accounts. Make sure you have Google Analytics account");
+
+				}
+
 
 				for (int i = 0; i < account_num; i++)
 				{
