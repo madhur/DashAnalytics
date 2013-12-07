@@ -61,7 +61,6 @@ public class DashAdsense extends DashClockExtension
 
 		AccountId = appPreferences.getMetadata(Keys.ACCOUNT_ID);
 		periodKey = appPreferences.getMetadata(Keys.ADSENSE_PERIOD_ID);
-		Log.d(App.TAG_ADSENSE, periodKey);
 		isLocaltime = appPreferences.isLocalTime();
 		showCurrency = appPreferences.isShowcurrency();
 
@@ -119,7 +118,7 @@ public class DashAdsense extends DashClockExtension
 		catch (Exception e)
 		{
 
-			Log.e(App.TAG_ADSENSE, "Exception in onInitialize" + e.getMessage());
+			Log.e(App.TAG_ADSENSE, "Exception in InitAuth" + e.getMessage());
 		}
 
 	}
@@ -285,7 +284,7 @@ public class DashAdsense extends DashClockExtension
 			catch (Exception e)
 			{
 
-				Log.e(App.TAG_ADSENSE, "Exception while published:"
+				Log.e(App.TAG_ADSENSE, "Exception while publishing update:"
 						+ e.getMessage());
 			}
 

@@ -57,7 +57,7 @@ public class DisplayAttribute
 	{
 		if(TextUtils.isEmpty(value))
 		{
-			Log.d(App.TAG_ADSENSE, "Encountered null value");
+			Log.w(App.TAG_ADSENSE, "Encountered null value");
 			value="0";
 		}
 		
@@ -116,14 +116,4 @@ public class DisplayAttribute
 		this.currencyCode = currencyCode;
 	}
 	
-//	private static String fmt(double d)
-//	{
-//		if (d == (int) d)
-//			return String.format("%d", (int) d);
-//		else
-//		{
-//			return new DecimalFormat("#.##").format(d);
-//		}
-//	}
-
 }

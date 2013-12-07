@@ -7,7 +7,6 @@ import com.google.android.apps.dashclock.configuration.AppChooserPreference;
 import in.co.madhur.dashclock.AppPreferences;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import in.co.madhur.dashclock.dashanalytics.DashAnalyticsPreferenceActivity;
-import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -84,9 +83,6 @@ public abstract class BasePreferenceActivity extends PreferenceActivity
 		super.onResume();
 
 		SetListeners();
-
-		
-
 	}
 
 	protected void UpdateLabel(ListPreference listPreference, String newValue)

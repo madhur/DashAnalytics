@@ -3,17 +3,13 @@ package in.co.madhur.dashclock.dashanalytics;
 import in.co.madhur.dashclock.BasePreferenceActivity;
 import in.co.madhur.dashclock.Consts;
 import in.co.madhur.dashclock.R;
-import in.co.madhur.dashclock.AppPreferences.ADSENSE_KEYS;
 import in.co.madhur.dashclock.AppPreferences.ANALYTICS_KEYS;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 public class DashAnalyticsPreferenceActivity extends BasePreferenceActivity
 {

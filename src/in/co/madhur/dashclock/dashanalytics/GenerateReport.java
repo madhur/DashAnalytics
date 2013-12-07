@@ -49,20 +49,24 @@ public class GenerateReport
 		}
 		else if (periodKey.equalsIgnoreCase(APIPeriod.LASTWEEK.toString()))
 		{
-			int i = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
+			int i = calendar.get(Calendar.DAY_OF_WEEK)
+					- calendar.getFirstDayOfWeek();
 			calendar.add(Calendar.DATE, -i - 7);
 			startDate = DATE_FORMATTER.format(calendar.getTime());
 			calendar.add(Calendar.DATE, 6);
-		    endDate = DATE_FORMATTER.format(calendar.getTime());
+			endDate = DATE_FORMATTER.format(calendar.getTime());
 
 		}
 		else if (periodKey.equalsIgnoreCase(APIPeriod.LASTMONTH.toString()))
 		{
 			calendar.add(Calendar.MONTH, -1);
 			calendar.set(Calendar.DATE, 1);
-			startDate =  DATE_FORMATTER.format(calendar.getTime());
+			startDate = DATE_FORMATTER.format(calendar.getTime());
 
-			calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE)); // changed calendar to cal
+			calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE)); // changed
+																					// calendar
+																					// to
+																					// cal
 
 			endDate = DATE_FORMATTER.format(calendar.getTime());
 
@@ -74,9 +78,7 @@ public class GenerateReport
 			endDate = "today";
 
 		}
-		
-		
-		
+
 		StringBuilder metricsBuilder = new StringBuilder();
 
 		for (String metric : metrics)
@@ -85,18 +87,14 @@ public class GenerateReport
 			metricsBuilder.append(',');
 		}
 
-		if (App.LOCAL_LOGV)
-		{
-			Log.d(App.TAG_ADSENSE, "Start Date: " + startDate);
-			Log.d(App.TAG_ADSENSE, "End Date: " + endDate);
-		}
+		Log.d(App.TAG_ADSENSE, "Start Date: " + startDate);
+		Log.d(App.TAG_ADSENSE, "End Date: " + endDate);
 
 		try
 		{
-			String metricsStr=metricsBuilder.substring(0, metricsBuilder.length() - 1).replace('_', ':');
+			String metricsStr = metricsBuilder.substring(0, metricsBuilder.length() - 1).replace('_', ':');
 			Log.d(App.TAG, metricsStr);
-			Get apiQuery = analytics.data().ga().get("ga:" + ProfileId, startDate, endDate, metricsStr );
-			Log.d(App.TAG, apiQuery.toString());
+			Get apiQuery = analytics.data().ga().get("ga:" + ProfileId, startDate, endDate, metricsStr);
 
 			return new AnalyticsAPIResult(apiQuery.execute());
 		}
@@ -121,8 +119,8 @@ public class GenerateReport
 	 *            the parameter to be escaped.
 	 * @return the escaped parameter.
 	 */
-//	public static String escapeFilterParameter(String parameter)
-//	{
-//		return parameter.replace("\\", "\\\\").replace(",", "\\,");
-//	}
+	// public static String escapeFilterParameter(String parameter)
+	// {
+	// return parameter.replace("\\", "\\\\").replace(",", "\\,");
+	// }
 }

@@ -1,7 +1,5 @@
 package in.co.madhur.dashclock.dashadsense;
 
-import java.util.ArrayList;
-
 import in.co.madhur.dashclock.AppPreferences.ADSENSE_KEYS;
 import in.co.madhur.dashclock.BasePreferenceActivity;
 import in.co.madhur.dashclock.Consts;
@@ -12,7 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 public class DashAdSensePreferenceActivity extends BasePreferenceActivity
 {

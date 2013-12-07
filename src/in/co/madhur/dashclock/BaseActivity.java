@@ -8,14 +8,11 @@ import in.co.madhur.dashclock.dashanalytics.AnalyticsDataService;
 import java.io.IOException;
 import java.util.ArrayList;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.squareup.otto.Subscribe;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
@@ -34,10 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -89,15 +83,15 @@ public abstract class BaseActivity extends Activity
 		}
 		catch (JsonParseException e)
 		{
-			Log.e(App.TAG, e.getMessage());
+			Log.e(App.TAG_BASE, e.getMessage());
 		}
 		catch (JsonMappingException e)
 		{
-			Log.e(App.TAG, e.getMessage());
+			Log.e(App.TAG_BASE, e.getMessage());
 		}
 		catch (IOException e)
 		{
-			Log.e(App.TAG, e.getMessage());
+			Log.e(App.TAG_BASE, e.getMessage());
 		}
 
 		if (acProfiles == null)
@@ -141,7 +135,7 @@ public abstract class BaseActivity extends Activity
 		int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
 		if (status != ConnectionResult.SUCCESS)
 		{
-			Log.e(App.TAG_BASE, String.valueOf(status));
+			Log.e(App.TAG_BASE, "Google play status: "+String.valueOf(status));
 			Toast.makeText(this, getString(R.string.gps_missing), Toast.LENGTH_LONG).show();
 			finish();
 			return;
@@ -170,7 +164,6 @@ public abstract class BaseActivity extends Activity
 			}
 		});
 
-//		App.getEventBus().register(UpdateUI);
 
 	}
 
@@ -219,7 +212,7 @@ public abstract class BaseActivity extends Activity
 			public boolean onNavigationItemSelected(int itemPosition, long itemId)
 			{
 				String selItem = adapter.getItem(itemPosition);
-				if (selItem.equals("Add Account"))
+				if (selItem.equals(getString(R.string.str_add_account)))
 				{
 					startAddGoogleAccountIntent();
 					return true;
@@ -251,7 +244,7 @@ public abstract class BaseActivity extends Activity
 			if (index != -1)
 				getActionBar().setSelectedNavigationItem(index);
 			else
-				Log.e(App.TAG_BASE, "acount not found");
+				Log.e(App.TAG_BASE, "account not found");
 		}
 
 	}
@@ -277,7 +270,6 @@ public abstract class BaseActivity extends Activity
 						setNavigationList(accountName);
 
 						credential.setSelectedAccountName(accountName);
-						// analytics_service = getService(credential);
 
 						setService();
 
@@ -294,9 +286,14 @@ public abstract class BaseActivity extends Activity
 			case REQUEST_AUTHORIZATION:
 				if (resultCode == Activity.RESULT_OK)
 				{
-					setNavigationList(null);
+					if(data!=null && data.getExtras()!=null)
+						setNavigationList( data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+					else
+						setNavigationList(null);
+					
 					setService();
 					getAccounts();
+
 				}
 				else
 				{
@@ -366,13 +363,6 @@ public abstract class BaseActivity extends Activity
 		getMenuInflater().inflate(R.menu.main, (android.view.Menu) menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-
-//	@Subscribe
-//	public void Notify(Intent reason)
-//	{
-//
-//		startActivityForResult(reason, REQUEST_AUTHORIZATION);
-//	}
 
 	protected void getAccounts()
 	{

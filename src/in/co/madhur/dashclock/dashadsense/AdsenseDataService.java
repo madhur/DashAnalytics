@@ -44,7 +44,7 @@ public class AdsenseDataService extends DataService
 			if (adsense_service == null)
 			{
 
-				Log.e(App.TAG, "Adsense service object isn null");
+				Log.e(App.TAG, "Adsense service object is null");
 				return new AccountResult(API_STATUS.FAILURE);
 			}
 

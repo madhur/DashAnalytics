@@ -10,7 +10,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import android.util.Log;
 
 import com.google.api.services.adsense.AdSense;
@@ -32,8 +31,9 @@ public class GenerateReport
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	public static APIResult run(AdSense adsense, String period, boolean isLocalTime, ArrayList<String> metrics) throws IOException
-		
+	public static APIResult run(AdSense adsense, String period, boolean isLocalTime, ArrayList<String> metrics)
+			throws IOException
+
 	{
 
 		Calendar calendar = Calendar.getInstance();
@@ -73,11 +73,8 @@ public class GenerateReport
 
 		}
 
-		if (App.LOCAL_LOGV)
-		{
-			Log.d(App.TAG_ADSENSE, "Start Date: " + startDate);
-			Log.d(App.TAG_ADSENSE, "End Date: " + endDate);
-		}
+		Log.d(App.TAG_ADSENSE, "Start Date: " + startDate);
+		Log.d(App.TAG_ADSENSE, "End Date: " + endDate);
 
 		Generate request = adsense.reports().generate(startDate, endDate);
 
@@ -96,13 +93,13 @@ public class GenerateReport
 		}
 		catch (UnknownHostException e)
 		{
-			Log.e(App.TAG_ADSENSE, "Exception unknownhost in doInBackground"
+			Log.e(App.TAG_ADSENSE, "Exception unknownhost in GenerateReport"
 					+ e.getMessage());
 			return new APIResult(e.getMessage());
 		}
 		catch (Exception e)
 		{
-			Log.e(App.TAG_ADSENSE, "Exception in doInBackground"
+			Log.e(App.TAG_ADSENSE, "Exception in GenerateReport"
 					+ e.getMessage());
 			return new APIResult(e.getMessage());
 		}

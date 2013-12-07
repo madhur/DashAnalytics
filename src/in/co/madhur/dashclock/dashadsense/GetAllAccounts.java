@@ -1,5 +1,9 @@
 package in.co.madhur.dashclock.dashadsense;
 
+import in.co.madhur.dashclock.App;
+
+import android.util.Log;
+
 import com.google.api.services.adsense.AdSense;
 import com.google.api.services.adsense.model.Account;
 import com.google.api.services.adsense.model.Accounts;
@@ -27,16 +31,21 @@ public class GetAllAccounts
 		{
 			accounts = adsense.accounts().list().setMaxResults(maxPageSize).setPageToken(pageToken).execute();
 
-			if (accounts.getItems() != null && !accounts.getItems().isEmpty())
+			if (App.LOCAL_LOGV)
 			{
-				for (Account account : accounts.getItems())
+				if (accounts.getItems() != null
+						&& !accounts.getItems().isEmpty())
 				{
-					System.out.printf("Account with ID \"%s\" and name \"%s\" was found.\n", account.getId(), account.getName());
+					for (Account account : accounts.getItems())
+					{
+						Log.d(App.TAG_ADSENSE, String.format("Account with ID \"%s\" and name \"%s\" was found.\n", account.getId(), account.getName()));
+
+					}
 				}
-			}
-			else
-			{
-				System.out.println("No accounts found.");
+				else
+				{
+					Log.d(App.TAG_ADSENSE, "No accounts found.");
+				}
 			}
 
 			pageToken = accounts.getNextPageToken();

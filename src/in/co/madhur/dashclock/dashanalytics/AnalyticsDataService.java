@@ -60,7 +60,7 @@ public class AnalyticsDataService extends DataService
 				if (analytics_service == null)
 				{
 
-					Log.e(App.TAG, "Analytics service object isn null");
+					Log.e(App.TAG, "Analytics service object is null");
 					return null;
 				}
 

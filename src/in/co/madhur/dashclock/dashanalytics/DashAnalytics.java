@@ -122,7 +122,7 @@ public class DashAnalytics extends DashClockExtension
 		catch (Exception e)
 		{
 
-			Log.e(App.TAG, "Exception in onInitialize" + e.getMessage());
+			Log.e(App.TAG, "Exception in InitAuth" + e.getMessage());
 		}
 
 	}
@@ -156,21 +156,20 @@ public class DashAnalytics extends DashClockExtension
 			String profileName = appPreferences.getMetadata(Keys.PROFILE_NAME);
 			String selectedProperty = appPreferences.getMetadata(Keys.PROPERTY_NAME);
 			// String metricKey = appPreferences.getMetadata(Keys.METRIC_ID);
-			Log.d(App.TAG, "metricL " + metricKey);
 			int metricIdentifier = getResources().getIdentifier(metricKey, "string", DashAnalytics.this.getPackageName());
 			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAnalytics.this.getPackageName());
 			boolean showProfile = appPreferences.getboolMetaData(Keys.SHOW_PROFILE);
 			boolean showLastUpdate = appPreferences.getboolMetaData(Keys.SHOW_ANALYTICS_LASTUPDATE);
 
-			String result;
-
 			if (App.LOCAL_LOGV)
 				Log.v(App.TAG, "Processing result for " + profileName);
 
-			List<ColumnHeaders> columnHeaders = results.getColumnHeaders();
+			
 
 			if (results != null)
 			{
+				List<ColumnHeaders> columnHeaders = results.getColumnHeaders();
+				
 				if (results.getRows() != null)
 				{
 					if (!results.getRows().isEmpty())
@@ -192,7 +191,6 @@ public class DashAnalytics extends DashClockExtension
 					}
 					else
 					{
-						result = "0";
 						Log.d(App.TAG, "empty result");
 						return;
 						// TODO: Check if its ok to publish zero metric
@@ -201,7 +199,6 @@ public class DashAnalytics extends DashClockExtension
 				}
 				else
 				{
-					result = "0";
 					Log.d(App.TAG, "null rows");
 					
 					for (int i = 0; i < columnHeaders.size(); ++i)
@@ -218,7 +215,6 @@ public class DashAnalytics extends DashClockExtension
 			}
 			else
 			{
-				result = "-1";
 				Log.d(App.TAG, "null result");
 				// TODO: Check if its ok to publish zero metric
 				publishUpdate(null);
@@ -287,7 +283,7 @@ public class DashAnalytics extends DashClockExtension
 			catch (Exception e)
 			{
 
-				Log.e(App.TAG, "Exception while published:" + e.getMessage());
+				Log.e(App.TAG, "Exception while publishing:" + e.getMessage());
 			}
 
 		}
