@@ -19,7 +19,12 @@ import in.co.madhur.dashclock.R;
 import in.co.madhur.dashclock.API.APIResult;
 import in.co.madhur.dashclock.AppPreferences.Keys;
 import in.co.madhur.dashclock.Consts.API_STATUS;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -44,6 +49,7 @@ public class DashAdsense extends DashClockExtension
 	boolean isLocaltime, showCurrency;
 	List<String> scopes = new ArrayList<String>();
 	List<String> metrics = new ArrayList<String>();
+	NetworkStateReceiver nsReciever;
 
 	@Override
 	protected void onUpdateData(int arg0)
@@ -104,6 +110,46 @@ public class DashAdsense extends DashClockExtension
 
 		InitAuth();
 
+		if(nsReciever!=null)
+		{
+			Log.d(App.TAG_ADSENSE, "Unregistering previous reciever");
+			unregisterReceiver(nsReciever);
+			nsReciever=null;
+		}
+		
+		nsReciever = new NetworkStateReceiver();
+
+		registerReceiver(nsReciever, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+
+	}
+
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+
+		if (nsReciever != null)
+			unregisterReceiver(nsReciever);
+	}
+
+	private class NetworkStateReceiver extends BroadcastReceiver
+	{
+		public void onReceive(Context context, Intent intent)
+		{
+			if (intent.getExtras() != null)
+			{
+				NetworkInfo ni = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
+				if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED)
+				{
+					Log.d(App.TAG_ADSENSE, "Network " + ni.getTypeName() + " connected");
+					onUpdateData(UPDATE_REASON_MANUAL);
+				}
+//				else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE))
+//				{
+//					Log.d("app", "There's no network connectivity");
+//				}
+			}
+		}
 	}
 
 	private void InitAuth()
@@ -201,7 +247,7 @@ public class DashAdsense extends DashClockExtension
 			else
 			{
 				Log.d(App.TAG_ADSENSE, "rows are null");
-				
+
 				for (int i = 0; i < headers.size(); ++i)
 				{
 					if (headers.get(i).getCurrency() != null)
@@ -211,19 +257,19 @@ public class DashAdsense extends DashClockExtension
 					}
 					values.put(headers.get(i).getName().replace(':', '_'), new DisplayAttribute("0", headers.get(i).getType()));
 				}
-				
+
 				// TODO: See if its ok to publish all metrics as zero
 				// publishUpdate(null);
 				// If no rows are returned, either do not publish update or
 				// publish null update to clear existing data
 				// return;
 			}
-			
-			if(values.size()==0)
+
+			if (values.size() == 0)
 			{
 				Log.d(App.TAG, "No data returned");
 				return;
-				
+
 			}
 
 			int periodIdentifier = getResources().getIdentifier(periodKey, "string", DashAdsense.this.getPackageName());

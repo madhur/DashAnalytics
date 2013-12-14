@@ -104,7 +104,7 @@ public class AnalyticsDataService extends DataService
 				catch (NullPointerException e)
 				{
 					// This exception occured for a user.
-					Log.e(App.TAG, e.getMessage());
+					//Log.e(App.TAG, e.getMessage());
 					Crittercism.logHandledException(e);
 					return new AccountResult("Could not retrieve accounts. Make sure you have Google Analytics account");
 

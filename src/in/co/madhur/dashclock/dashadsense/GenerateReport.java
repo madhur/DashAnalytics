@@ -73,8 +73,11 @@ public class GenerateReport
 
 		}
 
-		Log.d(App.TAG_ADSENSE, "Start Date: " + startDate);
-		Log.d(App.TAG_ADSENSE, "End Date: " + endDate);
+		if (App.LOCAL_LOGV)
+		{
+			Log.d(App.TAG_ADSENSE, "Start Date: " + startDate);
+			Log.d(App.TAG_ADSENSE, "End Date: " + endDate);
+		}
 
 		Generate request = adsense.reports().generate(startDate, endDate);
 

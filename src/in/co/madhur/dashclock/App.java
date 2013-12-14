@@ -13,7 +13,7 @@ public class App extends Application
 	public static String TAG_ADSENSE="DashAdSense";
 	public static String TAG_BASE="DashAnalyticsBase";
 	
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static final boolean LOCAL_LOGV = DEBUG;
 
 	@Override
