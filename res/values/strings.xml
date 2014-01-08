@@ -29,6 +29,10 @@
         
     <string name="ga_visitBounceRate">Bounce Rate</string>
     <string name="ga_pageviewsPerVisit">Page Views / Visit</string>
+     
+     <string name="ga_goalCompletionsAll">Goal Completions</string>
+      <string name="ga_goalValueAll">Goal Value</string>
+       <string name="ga_goalConversionRateAll">Goal Conversion Rate</string>
         
     
     <string name="gps_missing">Your phone seems to be missing Google Play Services. If it\'s a custom ROM make sure you have installed GApps package</string>
