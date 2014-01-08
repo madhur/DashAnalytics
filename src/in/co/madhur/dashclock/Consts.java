@@ -56,7 +56,10 @@ public class Consts
 		PAGE_VIEWS_PER_VISIT("ga_pageviewsPerVisit"),
 		SCREEN_VIEWS("ga_screenviews"),
 		UNIQUE_SCREEN_VIEWS("ga_uniqueScreenviews"),
-		SCREEN_VIEWS_PER_SESSION("ga_screenviewsPerSession");
+		SCREEN_VIEWS_PER_SESSION("ga_screenviewsPerSession"),
+		GOAL_COMPLETIONS_ALL("ga_goalCompletionsAll"),
+		GOAL_VALUE("ga_goalValueAll"),
+		GOAL_CONVERSIONRATE_ALL("ga_goalConversionRateAll");
 
 		private String key;
 

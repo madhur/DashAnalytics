@@ -150,10 +150,6 @@ public class DashAnalytics extends DashClockExtension
 					Log.d(App.TAG, "Network " + ni.getTypeName() + " connected");
 					onUpdateData(UPDATE_REASON_MANUAL);
 				}
-//				else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE))
-//				{
-//					Log.d("app", "There's no network connectivity");
-//				}
 			}
 		}
 	}
