@@ -66,7 +66,7 @@ public class DisplayAttribute
 			switch (type)
 			{
 				case METRIC_CURRENCY:
-					
+				case CURRENCY:
 					return NumberFormat.getNumberInstance().format(Double.parseDouble(value));
 
 				case INTEGER:
