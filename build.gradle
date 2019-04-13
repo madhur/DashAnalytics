@@ -1,10 +1,12 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://maven.google.com' }
+        jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.13.2'
+        classpath 'com.android.tools.build:gradle:3.3.2'
         
     }
 }
@@ -13,6 +15,8 @@ apply plugin: 'android'
 
 repositories {
     mavenCentral()
+    maven { url 'https://maven.google.com' }
+    jcenter()
 }
 
 	android {
@@ -31,8 +35,8 @@ repositories {
 	
 
 android {
-    buildToolsVersion "21.0.2"
-    compileSdkVersion 21
+
+    compileSdkVersion 26
     
      sourceSets {
         main {
@@ -45,7 +49,7 @@ android {
             assets.srcDirs = ['assets']
         }
 
-        instrumentTest.setRoot('tests')
+
     }
     
     
@@ -88,8 +92,12 @@ dependencies {
         signingConfig signingConfigs.release
     }
 }
-    
-    
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 26
+    }
+
+
 } 
 
 
